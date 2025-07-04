@@ -1,0 +1,25 @@
+{
+  "name": "tabetai-app",
+  "version": "1.0.0",
+  "description": "An app to help you decide what's for dinner!",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Project-Visi0n/tabetai-app.git"
+  },
+  "author": "Bradley Williams, Jasmine Hall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Project-Visi0n/tabetai-app/issues"
+  },
+  "homepage": "https://github.com/Project-Visi0n/tabetai-app#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "eslint": "^9.30.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.3.0"
+  }
+}
