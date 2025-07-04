@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
+  mode: 'development',
   entry: './client/src/index.jsx',
   output: {
     filename: 'index.js',
@@ -25,5 +26,13 @@ export default {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+  },
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'client', 'dist'),
+    },
+    port: 3000,
+    open: true,
+    hot: true,
   },
 };
