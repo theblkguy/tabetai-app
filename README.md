@@ -26,7 +26,7 @@ Tabetai solves these everyday problems:
 | Authentication       | Passport (Google OAuth)
 | Backend              | Express (RESTful server)
 | Database             | MongoDB with Mongoose
-| External API         | Spoontacular Ex
+| External API         | Spoonacular Ex
 | Deployment           | Google Cloud, Compute Engine
 
 ## Features
