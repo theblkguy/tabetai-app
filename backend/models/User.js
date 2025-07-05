@@ -1,3 +1,5 @@
+//create Schema for the user log in
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({

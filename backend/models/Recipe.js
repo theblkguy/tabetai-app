@@ -1,3 +1,5 @@
+//Create the schema for recipes inserted
+
 const mongoose = require('mongoose');
 
 const recipeSchema = new mongoose.Schema({
