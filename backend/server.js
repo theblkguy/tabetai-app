@@ -1,21 +1,21 @@
 //1. load env variables from .env
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 //2. Connect to MongoDB
-require('./db');
+import './db/index.js';
 
-const express = require('express');
-const app = express();
+import express from 'express';
 
 //3. Middleware to Parse JSON
+const app = express();
 app.use(express.json());
 
 //add recipe route to server
-const recipeRoutes = require('./routes/recipes');
-app.use('/api/recipes', recipeRoutes);
-
 //add user route to the server
-const userRoutes = require('./routes/users');
+import recipeRoutes from './routes/recipes.js';
+import userRoutes from './routes/users.js';
+app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
 
 //4. Just an empty endpoint here to test if the route works

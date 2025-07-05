@@ -1,6 +1,6 @@
 //create Schema for the user log in
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   googleId: { type: String, required: true }, //google O-Authentication
@@ -9,4 +9,4 @@ const userSchema = new mongoose.Schema({
   pantry: [String], //[] because we are leaving this open for options that are user specific
 });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);
