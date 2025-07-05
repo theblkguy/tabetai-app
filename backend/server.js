@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
   res.send('Hiii is this backend working??, YES!');
 });
 
-//5. Start the server 
+//5. Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
