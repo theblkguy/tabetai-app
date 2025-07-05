@@ -1,8 +1,8 @@
 //set up the mongoose Connection
-
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 //load variables from .env
-require('dotenv').config();
+dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,

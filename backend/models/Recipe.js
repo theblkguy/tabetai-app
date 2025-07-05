@@ -1,6 +1,6 @@
 //Create the schema for recipes inserted
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const recipeSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -11,4 +11,4 @@ const recipeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
-module.exports = mongoose.model('Recipe', recipeSchema);
+export default mongoose.model('Recipe', recipeSchema);
