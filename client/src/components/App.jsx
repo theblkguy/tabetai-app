@@ -13,14 +13,14 @@ import Search from './Search';
 
 function App() {
   return (
-  
+      
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/recipes" element={<RecipesPage />} />
         <Route path="/search" element={<Search />} />
         <Route path="/favorites" element={<FavoriteRecipes />} />
       </Routes>
-
+    
   );
 }
 
