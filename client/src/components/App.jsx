@@ -3,9 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 //make a homepage component
 import HomePage from './Homepage';
 //make a recipe page component
-import recipesPage from './RecipesPage';
+import RecipesPage from './RecipesPage';
 //perhaps make a profile page component
-import ProfilePage from './ProfilePage';
+import FavoriteRecipes from './FavoriteRecipes';
 //import search component
 import Search from './Search';
 
@@ -13,13 +13,16 @@ import Search from './Search';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/Profile" element={<ProfilePage />} />
-      <Route path="/Recipes" element={<RecipesPage/>} />
-      <Route path="/Search" element={<Search/>} />
-    </Routes>
+  
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/recipes" element={<RecipesPage />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/favorites" element={<FavoriteRecipes />} />
+      </Routes>
+
   );
 }
+
 
 export default App;
