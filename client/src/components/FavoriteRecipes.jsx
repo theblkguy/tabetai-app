@@ -1,5 +1,7 @@
 import React from "react";
 
+
+//built out with placeholder fake data until I connect to backend
 function FavoriteRecipes() {
   const recipes = ["Gumbo", "Avocado Toast", "Mac & Cheese"];
 
