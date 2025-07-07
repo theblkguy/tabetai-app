@@ -1,23 +1,25 @@
-import React from "react";
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 //make a homepage component
-import HomePage from ''
+import HomePage from './Homepage';
 //make a recipe page component
+import recipesPage from './RecipesPage';
 //perhaps make a profile page component
+import ProfilePage from './ProfilePage';
+//import search component
+import Search from './Search';
 
-class App extends React.Component {
-  constructor(props){
-    super(props);
-  }
+//refactored to React with hooks, we no longer need to make class components
 
-//render the different routes to the page
-render() {
+function App() {
   return (
-    <div>
+    <Routes>
       <Route path="/" element={<HomePage />} />
-    </div>
-  )
-}
+      <Route path="/Profile" element={<ProfilePage />} />
+      <Route path="/Recipes" element={<RecipesPage/>} />
+      <Route path="/Search" element={<Search/>} />
+    </Routes>
+  );
 }
 
 export default App;
