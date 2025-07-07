@@ -6,8 +6,7 @@ import HomePage from './Homepage';
 import RecipesPage from './RecipesPage';
 //perhaps make a profile page component
 import FavoriteRecipes from './FavoriteRecipes';
-//import search component
-import Search from './Search';
+
 
 //refactored to React with hooks, we no longer need to make class components
 
@@ -17,7 +16,6 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/recipes" element={<RecipesPage />} />
-        <Route path="/search" element={<Search />} />
         <Route path="/favorites" element={<FavoriteRecipes />} />
       </Routes>
 
