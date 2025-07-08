@@ -12,13 +12,13 @@ import FavoriteRecipes from './FavoriteRecipes';
 
 function App() {
   return (
-  
+      
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/recipes" element={<RecipesPage />} />
         <Route path="/favorites" element={<FavoriteRecipes />} />
       </Routes>
-
+    
   );
 }
 

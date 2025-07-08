@@ -5,7 +5,16 @@ const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
-const RecipesPage = ({ allRecipes }) => {
+// Sample fallback recipe in case no real data is passed
+const sampleRecipe = {
+  id: '1',
+  name: 'Jazzed-Up Gumbo',
+  image: 'https://via.placeholder.com/200',
+  ingredients: ['chicken', 'andouille sausage', 'okra', 'spices'],
+  instructions: 'Brown meat, build the roux, add veggies, and simmer to deliciousness.'
+};
+
+const RecipesPage = ({ allRecipes = [sampleRecipe] }) => {
   const query = useQuery().get('search') || '';
   const [filteredRecipes, setFilteredRecipes] = useState([]);
 
@@ -30,3 +39,4 @@ const RecipesPage = ({ allRecipes }) => {
 };
 
 export default RecipesPage;
+
