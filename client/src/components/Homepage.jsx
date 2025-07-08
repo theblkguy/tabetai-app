@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoginPage from "./LoginPage";
 
 function HomePage() {
   const [query, setQuery] = useState('');
@@ -47,6 +48,7 @@ function HomePage() {
           <li><Link to="/recipe">Search All Recipes</Link></li>
           <li><Link to="/search">My Recipes</Link></li>
           <li><Link to="/favorites">Favorite Recipes</Link></li>
+          <li><Link to="/login">Login Page</Link></li>
         </ul>
       </nav>
     </div>
