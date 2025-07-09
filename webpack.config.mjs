@@ -1,8 +1,10 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import webpack from 'webpack';
+import dotenv from 'dotenv';
+dotenv.config({ path: './client/.env' });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 export default {
   mode: 'development',
   entry: './client/src/index.jsx',
@@ -28,6 +30,11 @@ export default {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_GOOGLE_CLIENT_ID': JSON.stringify(process.env.REACT_APP_GOOGLE_CLIENT_ID)
+    })
+  ],
   resolve: {
     extensions: ['.js', '.jsx'],
   },

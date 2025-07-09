@@ -8,25 +8,35 @@ router.get('/test', (req, res) => {
   res.send('User route is working!');
 });
 
-// POST /api/users - Create or login a user
-router.post('/', async (req, res) => {
+// POST /api/users/register - Register a new user
+router.post('/register', async (req, res) => {
   try {
-    const { googleId, name, email } = req.body;
+    const { username, password } = req.body;
+    // Check if user exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) return res.status(400).json({ message: 'Username already exists' });
 
-    if (!googleId || !name || !email) {
-      return res.status(400).json({ error: 'googleId, name, and email are required' });
-    }
-
-    let existingUser = await User.findOne({ googleId });
-
-    if (!existingUser) {
-      existingUser = await User.create({ googleId, name, email });
-    }
-
-    res.status(200).json(existingUser);
+    const user = new User({ username, password });
+    await user.save();
+    res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-export default router;
+// POST /api/users/login - Login a user
+router.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+    // You can generate a JWT here if you want session/auth tokens
+    res.json({ message: 'Login successful', user: { username: user.username } });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
