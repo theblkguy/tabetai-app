@@ -10,6 +10,7 @@ import FavoriteRecipes from "./FavoriteRecipes";
 import LoginPage from "./LoginPage";
 //Google oAuth
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
@@ -43,7 +44,10 @@ function App() {
         </>
       )}
       {/* show user info if logged in */}
-      {user && <div>Hello, user! Itadakimasu!</div>}
+      {user && (() => {
+  const userInfo = jwtDecode(user.credential);
+  return <div>Hello, {userInfo.name || userInfo.email}! Itadakimasu!</div>;
+})()}
 
       <Routes>
         <Route path="/" element={<HomePage />} />
