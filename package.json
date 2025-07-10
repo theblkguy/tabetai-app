@@ -43,9 +43,6 @@
     "webpack-dev-server": "^5.2.2"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "bcrypt": "^6.0.0"
-=======
     "@react-oauth/google": "^0.12.2",
     "@tailwindcss/cli": "^4.1.11",
     "bcrypt": "^6.0.0",
@@ -55,6 +52,5 @@
     "react-hook-form": "^7.60.0",
     "react-router-dom": "^7.6.3",
     "scheduler": "^0.26.0"
->>>>>>> a1537dcc7bc74899ff02649a3707c0a3b9b6ebc4
   }
 }
