@@ -27,16 +27,52 @@ router.post('/register', async (req, res) => {
 // POST /api/users/login - Login a user
 router.post('/login', async (req, res) => {
   try {
+    console.log('Login request body:', req.body);
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    let user = await User.findOne({ username });
+    if (!user) {
+      // Auto-register new user if not found
+      user = new User({ username, password });
+      await user.save();
+      return res.status(201).json({ message: 'User registered and logged in', user: { username: user.username } });
+    }
 
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!isMatch) {
+      console.log('Password does not match');
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-    // You can generate a JWT here if you want session/auth tokens
     res.json({ message: 'Login successful', user: { username: user.username } });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/users/google-login - Login or register a Google user
+router.post('/google-login', async (req, res) => {
+  try {
+    const { token, profile } = req.body;
+    if (!profile || !profile.sub) {
+      return res.status(400).json({ message: 'Invalid Google profile' });
+    }
+    // Try to find user by Google ID
+    let user = await User.findOne({ googleId: profile.sub });
+    if (!user) {
+      // If not found, create a new user
+      user = new User({
+        googleId: profile.sub,
+        name: profile.name,
+        email: profile.email,
+        // Optionally add more fields from profile
+      });
+      await user.save();
+    }
+    res.json({ message: 'Google login successful', user: { googleId: user.googleId, name: user.name, email: user.email } });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+export default router;

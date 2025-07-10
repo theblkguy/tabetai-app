@@ -12,20 +12,20 @@ const userSchema = new mongoose.Schema({
   pantry: [String], //[] because we are leaving this open for options that are user specific
 });
 
-// Hash password before saving (only if password is set/modified)
-userSchema.pre("save", async function (next) {
-  // call next middleware if the password has NOT been changed or set
-  if (!this.isModified("password") || !this.password) return next();
-  // if the password is new or changed, hash the password before saving
-  this.password = await bcrypt.hash(this.password, 10);
-  // call next middleware
-  next();
 
-  // Method to compare password
-  userSchema.methods.comparePassword = function (candidatePassword) {
-    // compares the entered password to the stored password
-    return bcrypt.compare(candidatePassword, this.password);
-  };
+// Hash password before saving (only if password is set/modified)
+// If the password field is new or has been changed, hash it before saving
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || !this.password) return next();
+  // Hash the password with bcrypt
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
+
+// Method to compare password
+// Compares the entered password to the stored hashed password
+userSchema.methods.comparePassword = function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 export default mongoose.model("User", userSchema);
