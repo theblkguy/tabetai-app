@@ -19,6 +19,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
+  console.log("Google Client ID:", clientId);
+
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <Routes>

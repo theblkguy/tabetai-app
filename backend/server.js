@@ -1,6 +1,7 @@
 //1. load env variables from .env
 import dotenv from 'dotenv';
 dotenv.config();
+console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug: check if .env is loaded
 
 //2. Connect to MongoDB
 import './db/index.js';
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 //5. Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

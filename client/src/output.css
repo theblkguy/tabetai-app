@@ -1,4 +1,6 @@
 /*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
+<<<<<<< HEAD
+=======
 @layer properties;
 .visible {
   visibility: visible;
@@ -252,3 +254,4 @@
     }
   }
 }
+>>>>>>> a1537dcc7bc74899ff02649a3707c0a3b9b6ebc4
