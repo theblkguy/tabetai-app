@@ -13,5 +13,3 @@ root.render(
 <BrowserRouter> 
 <App /> 
 </BrowserRouter>);
-
-// ...existing code...
