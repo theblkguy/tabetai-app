@@ -1,14 +1,17 @@
+// webpack.config.mjs
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
   mode: 'development',
   entry: './client/src/index.jsx',
   output: {
-    filename: 'index.js',
+    filename: 'bundle.js', 
     path: path.resolve(__dirname, 'client', 'dist'),
+    publicPath: '/', 
   },
   module: {
     rules: [
@@ -24,19 +27,29 @@ export default {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader', 
+        ],
       },
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx'], 
   },
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'client', 'dist'),
+      directory: path.resolve(__dirname, 'client', 'dist'), 
     },
     port: 3000,
-    open: true,
     hot: true,
+    open: true, 
+    historyApiFallback: true, 
   },
 };
