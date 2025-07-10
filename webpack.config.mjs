@@ -5,20 +5,14 @@ import webpack from 'webpack';
 import dotenv from 'dotenv';
 dotenv.config({ path: './client/.env' });
 
-<<<<<<< HEAD
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-=======
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
->>>>>>> e153d52c80b96dac39016bccaee38857f311b8ca
 export default {
   mode: 'development',
   entry: './client/src/index.jsx',
   output: {
-    filename: 'bundle.js', 
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'client', 'dist'),
-    publicPath: '/', 
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -42,7 +36,7 @@ export default {
               importLoaders: 1,
             },
           },
-          'postcss-loader', 
+          'postcss-loader',
         ],
       },
     ],

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function HomePage() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -13,41 +13,68 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center p-6">
-      <div className="relative w-full max-w-3xl bg-mint rounded-[2rem] border-[12px] border-fridgeOutline p-6 sm:p-12 shadow-xl flex flex-col items-center">
+    <div className="min-h-screen bg-yellow flex items-center justify-center">
+      {/* Fridge Box */}
+      <div className="w-[400px] h-[650px] bg-peach rounded-[3rem] border-[12px] border-white shadow-[0_10px_40px_rgba(0,0,0,0.2)] flex flex-col justify-between relative px-6 pt-10 pb-6">
+        
+        {/* Fridge Handle */}
+        <div className="absolute left-[8px] top-1/2 -translate-y-1/2 w-[90px] h-[12px] bg-white rounded-full shadow-md border fridge-handle"></div>
 
-        {/* 🧊 Fridge Handle */}
-        <div className="absolute left-4 top-1/3 w-3 sm:w-4 h-24 sm:h-32 bg-white/80 rounded-full shadow-inner z-10"></div>
-
-        {/* Fridge Text */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-fridgeText mb-4 tracking-wider uppercase">
-          Tabetai
-        </h1>
-
-        {/* Search Bar */}
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md mb-8">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="What's in your fridge?"
-            className="flex-grow border border-gray-300 rounded-lg p-2"
-          />
-          <button
-            type="submit"
-            className="bg-fridgeText text-white px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
-          >
-            Search
-          </button>
-        </form>
-
-        {/* Fridge Magnet Buttons */}
-        <div className="w-full flex flex-wrap justify-center gap-4 bg-cream p-6 rounded-2xl">
-          <Link to="/recipe" className="magnet magnet-peach">All Recipes</Link>
-          <Link to="/search" className="magnet magnet-yellow">My Recipes</Link>
-          <Link to="/favorites" className="magnet magnet-lavender">Favorites</Link>
-          <Link to="/login" className="magnet magnet-cream">Login</Link>
+        {/* Top: Logo and Tagline */}
+        <div>
+          <h2 className="text-fridgeText text-6xl font-bold tracking-[0.4em] text-center mb-2">
+            TABETAI
+          </h2>
+          <p className="text-fridgeText text-lg text-center">I want to eat!</p>
         </div>
+
+        {/* Bottom: Navigation Buttons */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-yellow rounded-[1.25rem] w-full h-[80px] shadow-md flex items-center justify-center hover:scale-105 transition-transform">
+            <Link
+              to="/login"
+              className="text-fridgeText font-bold text-lg tracking-wide"
+            >
+              Login
+            </Link>
+          </div>
+          <div className="bg-lavender rounded-[1.25rem] w-full h-[80px] shadow-md flex items-center justify-center hover:scale-105 transition-transform">
+            <Link
+              to="/recipes"
+              className="text-fridgeText font-bold text-lg tracking-wide"
+            >
+              Recipes
+            </Link>
+          </div>
+          <div className="bg-white rounded-[1.25rem] w-full h-[80px] shadow-md flex items-center justify-center hover:scale-105 transition-transform">
+            <Link
+              to="/favorites"
+              className="text-fridgeText font-bold text-lg tracking-wide"
+            >
+              Favorites
+            </Link>
+          </div>
+          <div className="bg-peach rounded-[1.25rem] w-full h-[80px] shadow-md flex items-center justify-center hover:scale-105 transition-transform">
+            <Link
+              to="/"
+              className="text-fridgeText font-bold text-lg tracking-wide"
+            >
+              Home
+            </Link>
+          </div>
+        </div>
+        {/* Centered Emoji Magnets */}
+<span className="absolute top-[180px] left-[120px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍣</span>
+<span className="absolute top-[230px] left-[160px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍱</span>
+<span className="absolute top-[210px] left-[220px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍙</span>
+<span className="absolute top-[290px] left-[190px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🥠</span>
+<span className="absolute top-[270px] left-[140px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍇</span>
+<span className="absolute top-[180px] left-[250px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🧊</span>
+<span className="absolute top-[260px] left-[260px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍮</span>
+<span className="absolute top-[320px] left-[150px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍪</span>
+<span className="absolute top-[160px] left-[200px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍔</span>
+<span className="absolute top-[310px] left-[220px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🌮</span>
+<span className="absolute top-[340px] left-[180px] text-3xl hover:scale-125 cursor-pointer transition-transform duration-200">🍬</span>
       </div>
     </div>
   );
