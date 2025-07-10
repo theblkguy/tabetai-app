@@ -38,11 +38,23 @@
     "postcss-loader": "^8.1.1",
     "style-loader": "^4.0.0",
     "tailwindcss": "^4.1.11",
-    "webpack": "^5.99.9",
+    "webpack": "^5.100.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   },
   "dependencies": {
+<<<<<<< HEAD
     "bcrypt": "^6.0.0"
+=======
+    "@react-oauth/google": "^0.12.2",
+    "@tailwindcss/cli": "^4.1.11",
+    "bcrypt": "^6.0.0",
+    "jwt-decode": "^4.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.60.0",
+    "react-router-dom": "^7.6.3",
+    "scheduler": "^0.26.0"
+>>>>>>> a1537dcc7bc74899ff02649a3707c0a3b9b6ebc4
   }
 }

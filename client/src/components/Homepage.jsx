@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import LoginPage from "./LoginPage";
 
 function HomePage() {
   const [query, setQuery] = useState('');
@@ -14,43 +13,42 @@ function HomePage() {
   };
 
   return (
-    <div className="homepage">
-      <h1>🍱 Welcome to Tabetai 🍱</h1>
+    <div className="min-h-screen bg-cream flex items-center justify-center p-6">
+      <div className="relative w-full max-w-3xl bg-mint rounded-[2rem] border-[12px] border-fridgeOutline p-6 sm:p-12 shadow-xl flex flex-col items-center">
 
-      <p><strong>Tabetai</strong> means "I want to eat" in Japanese and that's exactly what this app is here for!</p>
+        {/* 🧊 Fridge Handle */}
+        <div className="absolute left-4 top-1/3 w-3 sm:w-4 h-24 sm:h-32 bg-white/80 rounded-full shadow-inner z-10"></div>
 
-      <p>This app helps you:</p>
-      <ul>
-        <li>✅ Reduce food waste by using what you already have</li>
-        <li>✅ Save time by skipping endless recipe scrolls</li>
-        <li>✅ Stay creative and inspired in the kitchen</li>
-        <li>✅ Cook meals that reflect your culture and dietary needs</li>
-      </ul>
+        {/* Fridge Text */}
+        <h1 className="text-3xl sm:text-4xl font-bold text-fridgeText mb-4 tracking-wider uppercase">
+          Tabetai
+        </h1>
 
-      <hr />
+        {/* Search Bar */}
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md mb-8">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="What's in your fridge?"
+            className="flex-grow border border-gray-300 rounded-lg p-2"
+          />
+          <button
+            type="submit"
+            className="bg-fridgeText text-white px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
+          >
+            Search
+          </button>
+        </form>
 
-      <h2>🔎 Start by searching for recipes</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter an ingredient (i.e. eggs, tofu)..."
-        />
-        <button type="submit">Search</button>
-      </form>
-
-      <hr />
-
-      <h2>📂 Explore the app</h2>
-      <nav>
-        <ul>
-          <li><Link to="/recipe">Search All Recipes</Link></li>
-          <li><Link to="/search">My Recipes</Link></li>
-          <li><Link to="/favorites">Favorite Recipes</Link></li>
-          <li><Link to="/login">Login Page</Link></li>
-        </ul>
-      </nav>
+        {/* Fridge Magnet Buttons */}
+        <div className="w-full flex flex-wrap justify-center gap-4 bg-cream p-6 rounded-2xl">
+          <Link to="/recipe" className="magnet magnet-peach">All Recipes</Link>
+          <Link to="/search" className="magnet magnet-yellow">My Recipes</Link>
+          <Link to="/favorites" className="magnet magnet-lavender">Favorites</Link>
+          <Link to="/login" className="magnet magnet-cream">Login</Link>
+        </div>
+      </div>
     </div>
   );
 }
