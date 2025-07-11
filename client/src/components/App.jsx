@@ -11,7 +11,7 @@ import LoginPage from "./LoginPage";
 //Google oAuth
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
 
 //refactored to React with hooks, we no longer need to make class components
 

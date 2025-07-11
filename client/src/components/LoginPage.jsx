@@ -8,9 +8,9 @@ let clientId = undefined;
 if (
   typeof process !== "undefined" &&
   process.env &&
-  process.env.REACT_APP_GOOGLE_CLIENT_ID
+  process.env.REACT_APP_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID
 ) {
-  clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
 }
 
 const LoginPage = ({ onLogin, error, setError }) => {

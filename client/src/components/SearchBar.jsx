@@ -6,16 +6,14 @@ function SearchBar() {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [error, setError] = useState("");
 
-  // Use API key from .env (must start with REACT_APP_)
-  const apiKey = process.env.REACT_APP_SPOONACULAR_KEY;
+
 
   const handleSearch = async () => {
     setError("");
     setRecipes([]);
     setSelectedRecipe(null);
-    const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${encodeURIComponent(query)}&number=5&ranking=1&ignorePantry=true&apiKey=${apiKey}`;
     try {
-      const res = await fetch(url);
+      const res = await fetch(`/api/spoonacular/recipes?ingredients=${encodeURIComponent(query)}`);
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
       setRecipes(data);
@@ -26,9 +24,8 @@ function SearchBar() {
 
   const handleRecipeClick = async (id) => {
     setError("");
-    const url = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${apiKey}`;
     try {
-      const res = await fetch(url);
+      const res = await fetch(`/api/spoonacular/recipes/${id}`);
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
       setSelectedRecipe(data);
