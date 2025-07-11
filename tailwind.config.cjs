@@ -10,14 +10,6 @@ module.exports = {
         cream: '#FDF6E3',
         fridgeText: '#2D2D2D',
       },
-      // Extend screens instead of replacing them
-      screens: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1536px',
-      },
     },
   },
   plugins: [],
