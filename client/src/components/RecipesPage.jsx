@@ -1,42 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-const useQuery = () => {
-  return new URLSearchParams(useLocation().search);
-};
+// Fake data
+const allRecipes = [
+  { id: 1, name: "Spaghetti", ingredients: ["noodles", "tomato"] },
+  { id: 2, name: "Tuna Salad", ingredients: ["tuna", "mayo", "lettuce"] },
+  { id: 3, name: "Avocado Toast", ingredients: ["bread", "avocado", "egg"] },
+];
 
-// Sample fallback recipe in case no real data is passed
-const sampleRecipe = {
-  id: '1',
-  name: 'Jazzed-Up Gumbo',
-  image: 'https://via.placeholder.com/200',
-  ingredients: ['chicken', 'andouille sausage', 'okra', 'spices'],
-  instructions: 'Brown meat, build the roux, add veggies, and simmer to deliciousness.'
-};
+const useQuery = () => new URLSearchParams(useLocation().search);
 
-const RecipesPage = ({ allRecipes = [sampleRecipe] }) => {
-  const query = useQuery().get('search') || '';
+const RecipesPage = () => {
+  const query = useQuery().get("search") || "";
   const [filteredRecipes, setFilteredRecipes] = useState([]);
 
   useEffect(() => {
-    const results = allRecipes.filter(recipe =>
-      recipe.name.toLowerCase().includes(query.toLowerCase())
+    const results = allRecipes.filter((recipe) =>
+      recipe.ingredients.some((ing) =>
+        ing.toLowerCase().includes(query.toLowerCase())
+      )
     );
     setFilteredRecipes(results);
-  }, [query, allRecipes]);
+  }, [query]);
 
   return (
-    <div>
-      <h2>Recipes</h2>
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-2">Recipes</h2>
       {query && <p>Showing results for: <strong>{query}</strong></p>}
       <ul>
-        {filteredRecipes.map(recipe => (
-          <li key={recipe.id}>{recipe.name}</li>
+        {filteredRecipes.map((recipe) => (
+          <li key={recipe.id} className="mt-2">{recipe.name}</li>
         ))}
+        {filteredRecipes.length === 0 && <li>No recipes found 😢</li>}
       </ul>
     </div>
   );
 };
 
 export default RecipesPage;
-
