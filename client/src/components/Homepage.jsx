@@ -14,7 +14,7 @@ const handleSubmit = () => {
 
 
   return (
-    <div className="min-h-screen bg-yellow flex items-center justify-center">
+    <div className="min-h-screen bg-lavender flex items-center justify-center">
       {/* Fridge Box */}
       <div className="w-[400px] h-[650px] bg-peach rounded-[3rem] border-[12px] border-white shadow-[0_10px_40px_rgba(0,0,0,0.2)] flex flex-col relative px-6 pt-10 pb-6">
         
