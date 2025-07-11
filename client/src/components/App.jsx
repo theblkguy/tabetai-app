@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+//import the layout to put navbar on each page
+import Layout from "./Layout";
 //make a homepage component
-import HomePage from "./Homepage";
-//make a recipe page component
-import RecipesPage from "./RecipesPage";
+import HomePage from "./Homepage";;
 //perhaps make a profile page component
 import FavoriteRecipes from "./FavoriteRecipes";
 //made a login component
@@ -24,10 +24,11 @@ function App() {
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <Routes>
+        <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/recipes" element={<RecipesPage />} />
         <Route path="/favorites" element={<FavoriteRecipes />} />
         <Route path="/login" element={<LoginPage />} />
+        </Route>
       </Routes>
     </GoogleOAuthProvider>
   );
