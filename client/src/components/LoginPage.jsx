@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 
-//make a login page function
-
+// Get Google client ID
 let clientId = undefined;
 if (
   typeof process !== "undefined" &&
@@ -17,94 +16,114 @@ if (
 const LoginPage = ({ onLogin, error, setError }) => {
   const { register, handleSubmit } = useForm();
 
-  // Handle username/password login
   const onSubmit = async (data) => {
     try {
-      // Call backend to check if user exists, if not, create user
       const response = await fetch("/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
+      if (!response.ok) throw new Error("Login failed");
       const user = await response.json();
       if (onLogin) onLogin(user);
       if (setError) setError(null);
-      // Redirect to homepage after successful login
       window.location.href = "/";
     } catch {
       if (setError) setError("Login failed. Please try again.");
     }
   };
 
-  // Logout handler
   const handleLogout = async () => {
-    // Clear any user state (if you use localStorage or context, clear it here)
     if (onLogin) onLogin(null);
-    // Clear tokens from localStorage/sessionStorage if used
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
-    // Optionally, call backend logout endpoint
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     try {
       await fetch("/api/users/logout", { method: "POST" });
-    } catch (e) {
-      // Ignore errors from logout endpoint
-    }
+    } catch {}
     window.location.href = "/login";
   };
 
   return (
-    <>
-      {/* Google Login button and error message */}
-      <GoogleLogin
-        onSuccess={async (credentialResponse) => {
-          try {
-            // Decode JWT to get user info
-            const decoded = jwtDecode(credentialResponse.credential);
-            // Send to backend to create/check user
-            const response = await fetch("/api/users/google-login", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                token: credentialResponse.credential,
-                profile: decoded,
-              }),
-            });
-            if (!response.ok) {
-              throw new Error("Google login failed");
-            }
-            const user = await response.json();
-            if (onLogin) onLogin(user);
-            if (setError) setError(null);
-            // Redirect to main page
-            window.location.href = "/";
-          } catch {
-            if (setError) setError("Google login failed. Please try again.");
-          }
-        }}
-        onError={() => {
-          // log error to console
-          console.error("Google login failed");
-          // set error message for user
-          if (setError) setError("Google login failed. Please try again.");
-        }}
-      />
-      {/* show error message if present */}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <div style={{ margin: "1em 0" }}>or</div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <input id="username" {...register("username")} />
+    <div className="min-h-screen bg-purple-200 pt-20 flex items-center justify-center px-4">
+      <div className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg w-full max-w-sm">
+        <h2 className="text-2xl font-bold text-fridgeText text-center mb-4">
+          Log in to Tabetai 🍱
+        </h2>
+
+        {/* Google Login */}
+        <div className="flex justify-center mb-4">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const decoded = jwtDecode(credentialResponse.credential);
+                const response = await fetch("/api/users/google-login", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    token: credentialResponse.credential,
+                    profile: decoded,
+                  }),
+                });
+                if (!response.ok) throw new Error("Google login failed");
+                const user = await response.json();
+                if (onLogin) onLogin(user);
+                if (setError) setError(null);
+                window.location.href = "/";
+              } catch {
+                if (setError) setError("Google login failed. Please try again.");
+              }
+            }}
+            onError={() => {
+              console.error("Google login failed");
+              if (setError) setError("Google login failed. Please try again.");
+            }}
+          />
         </div>
-        <label htmlFor="password">Password:</label>
-        <input id="password" type="password" {...register("password")} />
-        <button type="submit">Log In</button>
-      </form>
-      <button style={{ marginTop: '1em' }} onClick={handleLogout}>Log Out</button>
-    </>
+
+        {/* Error message */}
+        {error && <p className="text-red-500 text-sm text-center mb-3">{error}</p>}
+
+        <p className="text-sm text-center text-gray-500 mb-2">or use a username</p>
+
+        {/* Username/Password Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          <div>
+            <input
+              id="username"
+              placeholder="Username"
+              {...register("username")}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-lavender/30 text-fridgeText placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+              required
+            />
+          </div>
+          <div>
+            <input
+              id="password"
+              type="password"
+              placeholder="Password"
+              {...register("password")}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-lavender/30 text-fridgeText placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-yellow-300 hover:bg-yellow-400 text-fridgeText font-semibold py-2 rounded-lg transition-all"
+          >
+            Log In
+          </button>
+        </form>
+
+        {/* Logout Button */}
+        <button
+          style={{ marginTop: "1em" }}
+          onClick={handleLogout}
+          className="text-xs text-center text-gray-400 hover:text-fridgeText block w-full"
+        >
+          Log Out
+        </button>
+      </div>
+    </div>
   );
 };
 
