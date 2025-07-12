@@ -10,6 +10,13 @@ const userSchema = new mongoose.Schema({
   name: String,
   email: String,
   pantry: [String], //[] because we are leaving this open for options that are user specific
+   favorites: [
+    {
+      id: String,         // Spoonacular recipe ID
+      title: String,      // Recipe title
+      image: String,      // Recipe image URL
+    }
+  ],
 });
 
 

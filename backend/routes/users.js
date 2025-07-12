@@ -75,4 +75,46 @@ router.post('/google-login', async (req, res) => {
   }
 });
 
+// Add a Spoonacular recipe to favorites
+router.post("/:userId/favorites", async (req, res) => {
+  const { userId } = req.params;
+  const recipe = req.body.recipe; // { id, title, image, ... }
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { favorites: recipe } }, // prevents duplicates
+      { new: true }
+    );
+    res.status(200).json(user.favorites);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Get all favorite recipes for a user
+router.get("/:userId/favorites", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    res.status(200).json(user.favorites);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Remove a favorite recipe 
+router.delete("/:userId/favorites/:recipeId", async (req, res) => {
+  const { userId, recipeId } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { favorites: { id: recipeId } } },
+      { new: true }
+    );
+    res.status(200).json(user.favorites);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 export default router;
