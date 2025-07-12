@@ -7,15 +7,14 @@ console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug: check if .env is
 import './db/index.js';
 
 import express from 'express';
-
-//3. Middleware to Parse JSON
 const app = express();
 app.use(express.json());
 
-//add recipe route to server
-//add user route to the server
+//3. Register routes
+import searchbarRoutes from './routes/searchbar.js';
 import recipeRoutes from './routes/recipes.js';
 import userRoutes from './routes/users.js';
+app.use('/api/spoonacular', searchbarRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
 
