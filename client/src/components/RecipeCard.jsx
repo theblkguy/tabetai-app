@@ -1,6 +1,7 @@
 import React from "react";
 
 function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
+  console.log('isFavorite:', isFavorite, 'for recipe:', recipe);
   return (
     <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:bg-lavender transition-colors">
       <img
@@ -33,7 +34,7 @@ function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
         type="button"
         onClick={e => {
           e.stopPropagation();
-          onFavoriteToggle(recipe);
+          onFavoriteToggle(recipe, isFavorite);
         }}
         className={`mt-2 text-2xl ${isFavorite ? "text-lavender" : "text-gray-300"}`}
         aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}

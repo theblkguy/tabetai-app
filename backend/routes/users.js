@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
       // Auto-register new user if not found
       user = new User({ username, password });
       await user.save();
-      return res.status(201).json({ message: 'User registered and logged in', user: { username: user.username } });
+      return res.status(201).json({ message: 'User registered and logged in', user: { id: user._id, username: user.username } });
     }
 
     const isMatch = await user.comparePassword(password);
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    res.json({ message: 'Login successful', user: { username: user.username } });
+    res.json({ message: 'Login successful', user: { id: user._id, username: user.username } });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Server error' });
@@ -69,7 +69,15 @@ router.post('/google-login', async (req, res) => {
       });
       await user.save();
     }
-    res.json({ message: 'Google login successful', user: { googleId: user.googleId, name: user.name, email: user.email } });
+    res.json({
+      message: 'Google login successful',
+      user: {
+        id: user._id,
+        googleId: user.googleId,
+        name: user.name,
+        email: user.email
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

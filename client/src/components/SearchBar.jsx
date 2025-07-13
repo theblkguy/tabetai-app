@@ -8,11 +8,18 @@ function SearchBar({ userId }) {
   const [error, setError] = useState("");
   const [favorites, setFavorites] = useState([]);
 
+  // Fetch favorites and merge into recipes
   useEffect(() => {
     if (!userId) return;
     fetch(`/api/users/${userId}/favorites`)
       .then((res) => res.json())
-      .then(setFavorites);
+      .then(favs => {
+        setFavorites(favs);
+        setRecipes(prevRecipes => prevRecipes.map(r => ({
+          ...r,
+          favorite: favs.some(fav => fav.id == r.id)
+        })));
+      });
   }, [userId]);
 
   const handleSearch = async () => {
@@ -25,7 +32,11 @@ function SearchBar({ userId }) {
       );
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
-      setRecipes(data);
+      // Merge favorite state
+      setRecipes(data.map(r => ({
+        ...r,
+        favorite: favorites.some(fav => fav.id == r.id)
+      })));
     } catch {
       setError("Failed to fetch recipes.");
     }
@@ -43,18 +54,40 @@ function SearchBar({ userId }) {
     }
   };
 
-  const handleFavorite = async (recipe) => {
+  const handleFavorite = async (recipe, isFavorite) => {
     if (!userId) return;
-    await fetch(`/api/users/${userId}/favorites`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipe }),
-    });
-    // Refresh favorites
+    if (isFavorite) {
+      // Remove from favorites
+      setRecipes(prev => prev.map(r =>
+        r.id == recipe.id ? { ...r, favorite: false } : r
+      ));
+      await fetch(`/api/users/${userId}/favorites/${recipe.id}`, {
+        method: "DELETE",
+      });
+    } else {
+      // Add to favorites
+      setRecipes(prev => prev.map(r =>
+        r.id == recipe.id ? { ...r, favorite: true } : r
+      ));
+      await fetch(`/api/users/${userId}/favorites`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipe }),
+      });
+    }
+    // Refresh favorites and merge
     fetch(`/api/users/${userId}/favorites`)
       .then((res) => res.json())
-      .then(setFavorites);
+      .then(favs => {
+        setFavorites(favs);
+        setRecipes(prevRecipes => prevRecipes.map(r => ({
+          ...r,
+          favorite: favs.some(fav => fav.id == r.id)
+        })));
+      });
   };
+
+
 
   return (
     <div>
@@ -108,7 +141,7 @@ function SearchBar({ userId }) {
               <li key={recipe.id}>
                 <RecipeCard
                   recipe={recipe}
-                  isFavorite={favorites.some((fav) => fav.id === recipe.id)}
+                  isFavorite={recipe.favorite}
                   onFavoriteToggle={handleFavorite}
                   onClick={() => handleRecipeClick(recipe.id)}
                 />
