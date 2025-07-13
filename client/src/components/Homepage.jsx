@@ -30,7 +30,7 @@ function HomePage() {
             <p className="text-gray-800 text-lg text-center">I want to eat!</p>
           </div>
 
-          {/* ---------- ✨ RANDOM EMOJI MAGNETS ✨ ---------- */}
+          {/* ----------  RANDOM EMOJI MAGNETS ---------- */}
           {["🍣", "🍱", "🍙", "🥠", "🍇", "🧊", "🍮", "🍪", "🍔", "🌮", "🍬"].map(
             (emoji, i) => {
               // Random positions inside the fridge
