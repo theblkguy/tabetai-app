@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { useUser } from "../UserContext";
 
 // Get Google client ID
 let clientId = undefined;
@@ -15,6 +16,7 @@ if (
 
 const LoginPage = ({ onLogin, error, setError }) => {
   const { register, handleSubmit } = useForm();
+  const { setUser } = useUser();
 
   const onSubmit = async (data) => {
     try {
@@ -25,7 +27,9 @@ const LoginPage = ({ onLogin, error, setError }) => {
       });
       if (!response.ok) throw new Error("Login failed");
       const user = await response.json();
-      if (onLogin) onLogin(user);
+      setUser(user.user);
+      localStorage.setItem("user", JSON.stringify(user.user));
+      if (onLogin) onLogin(user.user);
       if (setError) setError(null);
       window.location.href = "/";
     } catch {
@@ -35,11 +39,14 @@ const LoginPage = ({ onLogin, error, setError }) => {
 
   const handleLogout = async () => {
     if (onLogin) onLogin(null);
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     try {
       await fetch("/api/users/logout", { method: "POST" });
-    } catch {}
+    } catch {
+      // Ignore logout errors
+    }
     window.location.href = "/login";
   };
 
@@ -66,7 +73,9 @@ const LoginPage = ({ onLogin, error, setError }) => {
                 });
                 if (!response.ok) throw new Error("Google login failed");
                 const user = await response.json();
-                if (onLogin) onLogin(user);
+                setUser(user.user);
+                localStorage.setItem("user", JSON.stringify(user.user));
+                if (onLogin) onLogin(user.user);
                 if (setError) setError(null);
                 window.location.href = "/";
               } catch {
@@ -74,7 +83,6 @@ const LoginPage = ({ onLogin, error, setError }) => {
               }
             }}
             onError={() => {
-              console.error("Google login failed");
               if (setError) setError("Google login failed. Please try again.");
             }}
           />
