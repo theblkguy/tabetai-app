@@ -3,13 +3,13 @@ import React from "react";
 function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
   console.log('isFavorite:', isFavorite, 'for recipe:', recipe);
   return (
-    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:bg-lavender transition-colors">
+    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:bg-lavender transition-colors w-32 h-32">
       <img
         src={recipe.image}
         alt={recipe.title}
         style={{
-          width: "40px",
-          height: "40px",
+          width: "32px",
+          height: "32px",
           objectFit: "cover",
           borderRadius: "0.5rem",
           marginBottom: "0.5rem",

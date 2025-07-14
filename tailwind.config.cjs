@@ -8,7 +8,7 @@ module.exports = {
         yellow: '#FFF7AE',
         lavender: '#EBD8FF',
         cream: '#FDF6E3',
-        fridgeText: '#2D2D2D',
+        fridgeText: '#000000ff',
       },
     },
   },
