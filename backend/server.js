@@ -14,6 +14,7 @@ app.use(express.json());
 import searchbarRoutes from './routes/searchbar.js';
 import recipeRoutes from './routes/recipes.js';
 import userRoutes from './routes/users.js';
+
 app.use('/api/spoonacular', searchbarRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
@@ -28,3 +29,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
