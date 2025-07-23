@@ -5,6 +5,7 @@ dotenv.config();
 
 const router = express.Router();
 const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY || process.env.SPOONACULAR_API_KEY;
+console.log(apiKey);
 
 // Debug: log the API key status (do not log the key itself for security)
 if (!apiKey) {

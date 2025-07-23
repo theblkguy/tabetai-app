@@ -23,5 +23,23 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+//Patch: give user the ability to update an existing recipe
+router.patch("/:id", async (req, res) => {
+  try {
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    if (!updatedRecipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+    res.json(updatedRecipe);
+  } catch (err) {
+    console.error("Error updated recipe", err);
+    res.status(500).json({ error: "Failed to update recipe" });
+  }
+});
+
 
 export default router;
