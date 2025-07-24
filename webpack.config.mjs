@@ -54,16 +54,16 @@ export default {
     })
   ],
   resolve: {
-    extensions: ['.js', '.jsx'], 
+    extensions: ['.js', '.jsx'],
   },
   devServer: {
+    historyApiFallback: true,
     static: {
       directory: path.resolve(__dirname, 'client', 'dist'), 
     },
     port: 3000,
     hot: true,
     open: true, 
-    historyApiFallback: true, 
     proxy: [
       {
         context: ['/api'],

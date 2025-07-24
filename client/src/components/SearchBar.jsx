@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import RecipeCard from "./RecipeCard";
 
 function SearchBar({ userId }) {
@@ -7,6 +8,7 @@ function SearchBar({ userId }) {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [error, setError] = useState("");
   const [favorites, setFavorites] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch favorites and merge into recipes
   useEffect(() => {
@@ -42,16 +44,8 @@ function SearchBar({ userId }) {
     }
   };
 
-  const handleRecipeClick = async (id) => {
-    setError("");
-    try {
-      const res = await fetch(`/api/spoonacular/recipes/${id}`);
-      if (!res.ok) throw new Error("API error");
-      const data = await res.json();
-      setSelectedRecipe(data);
-    } catch {
-      setError("Failed to fetch recipe details.");
-    }
+  const handleRecipeClick = (id) => {
+    navigate(`/recipe/${id}`);
   };
 
   const handleFavorite = async (recipe, isFavorite) => {

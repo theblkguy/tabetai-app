@@ -1,9 +1,14 @@
 import React from "react";
 
 function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
-  console.log('isFavorite:', isFavorite, 'for recipe:', recipe);
+  if (!recipe) return null; // Prevents undefined errors
+
   return (
-    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:bg-lavender transition-colors w-32 h-32">
+    <div
+      className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:bg-lavender transition-colors w-32 h-32"
+      onClick={onClick}
+      style={{ cursor: "pointer" }}
+    >
       <img
         src={recipe.image}
         alt={recipe.title}
@@ -15,7 +20,6 @@ function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
           marginBottom: "0.5rem",
           cursor: "pointer"
         }}
-        onClick={onClick}
         tabIndex={0}
         role="button"
         aria-label={`View details for ${recipe.title}`}
@@ -23,7 +27,6 @@ function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
       <span
         className="font-semibold text-center"
         style={{ cursor: "pointer" }}
-        onClick={onClick}
         tabIndex={0}
         role="button"
         aria-label={`View details for ${recipe.title}`}
@@ -34,7 +37,7 @@ function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
         type="button"
         onClick={e => {
           e.stopPropagation();
-          onFavoriteToggle(recipe, isFavorite);
+          onFavoriteToggle(recipe, !isFavorite);
         }}
         className={`mt-2 text-2xl ${isFavorite ? "text-lavender" : "text-gray-300"}`}
         aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
