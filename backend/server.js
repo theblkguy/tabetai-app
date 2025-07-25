@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug: check if .env is loaded
+console.log('SPOONACULAR_API_KEY:', process.env.SPOONACULAR_API_KEY); // Debug: check if .env is loaded
 
 //2. Connect to MongoDB
 import './db/index.js';
@@ -9,13 +10,15 @@ import './db/index.js';
 import express from 'express';
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //3. Register routes
 import searchbarRoutes from './routes/searchbar.js';
+import spoonacularRouter from './routes/spoonacular.js';
 import recipeRoutes from './routes/recipes.js';
 import userRoutes from './routes/users.js';
 
-app.use('/api/spoonacular', searchbarRoutes);
+app.use('/api/spoonacular', spoonacularRouter);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
 
