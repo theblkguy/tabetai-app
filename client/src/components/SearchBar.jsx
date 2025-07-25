@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import RecipeCard from "./RecipeCard";
+import { useNavigate } from "react-router-dom";
 
 function SearchBar({ userId }) {
   const [query, setQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  // Removed selectedRecipe state, navigation now handles card display
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const [favorites, setFavorites] = useState([]);
 
@@ -25,7 +27,7 @@ function SearchBar({ userId }) {
   const handleSearch = async () => {
     setError("");
     setRecipes([]);
-    setSelectedRecipe(null);
+    // Removed setSelectedRecipe, navigation now handles card display
     try {
       const res = await fetch(
         `/api/spoonacular/recipes?ingredients=${encodeURIComponent(query)}`
@@ -42,16 +44,8 @@ function SearchBar({ userId }) {
     }
   };
 
-  const handleRecipeClick = async (id) => {
-    setError("");
-    try {
-      const res = await fetch(`/api/spoonacular/recipes/${id}`);
-      if (!res.ok) throw new Error("API error");
-      const data = await res.json();
-      setSelectedRecipe(data);
-    } catch {
-      setError("Failed to fetch recipe details.");
-    }
+  const handleRecipeClick = (id) => {
+    navigate(`/recipe-card/${id}`);
   };
 
   const handleFavorite = async (recipe, isFavorite) => {
@@ -108,47 +102,18 @@ function SearchBar({ userId }) {
       </div>
       <div className="mt-4">
         {error && <div className="text-red-500 text-center mb-2">{error}</div>}
-        {selectedRecipe ? (
-          <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-2">{selectedRecipe.title}</h2>
-            <img
-              src={selectedRecipe.image}
-              alt={selectedRecipe.title}
-              className="w-40 h-40 object-cover rounded mb-2"
-            />
-            {selectedRecipe.instructions ? (
-              <div
-                className="prose max-w-xs text-fridgeText mb-2"
-                dangerouslySetInnerHTML={{
-                  __html: selectedRecipe.instructions,
-                }}
+        <ul className="grid grid-cols-2 gap-4">
+          {recipes.map((recipe) => (
+            <li key={recipe.id}>
+              <RecipeCard
+                recipe={recipe}
+                isFavorite={recipe.favorite}
+                onFavoriteToggle={handleFavorite}
+                onClick={() => handleRecipeClick(recipe.id)}
               />
-            ) : (
-              <div className="text-gray-500 mb-2">
-                No instructions available.
-              </div>
-            )}
-            <button
-              onClick={() => setSelectedRecipe(null)}
-              className="mt-2 px-4 py-2 bg-lavender text-white rounded-lg shadow hover:bg-peach transition-colors"
-            >
-              Back to results
-            </button>
-          </div>
-        ) : (
-          <ul className="grid grid-cols-2 gap-4">
-            {recipes.map((recipe) => (
-              <li key={recipe.id}>
-                <RecipeCard
-                  recipe={recipe}
-                  isFavorite={recipe.favorite}
-                  onFavoriteToggle={handleFavorite}
-                  onClick={() => handleRecipeClick(recipe.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

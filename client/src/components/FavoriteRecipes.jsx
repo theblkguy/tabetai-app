@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../UserContext";
 import RecipeCard from "./RecipeCard";
+import { useNavigate } from "react-router-dom";
 
 function Modal({ open, onClose, onConfirm, recipe }) {
   if (!open) return null;
@@ -23,6 +24,7 @@ function FavoriteRecipes() {
   const [favorites, setFavorites] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingUnfavorite, setPendingUnfavorite] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user?.id) return;
@@ -59,7 +61,7 @@ function FavoriteRecipes() {
                 recipe={recipe}
                 isFavorite={true}
                 onFavoriteToggle={() => handleUnfavorite(recipe)}
-                onClick={() => {}}
+                onClick={() => navigate(`/recipe-card/${recipe.id}`)}
               />
             </li>
           ))}

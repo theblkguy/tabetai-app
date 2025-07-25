@@ -1,7 +1,38 @@
 import express from 'express';
 import Recipe from '../models/Recipe.js';
-
+import fetch from 'node-fetch';
 const router = express.Router();
+const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY || 'YOUR_API_KEY';
+
+// Spoonacular Recipe Card endpoint
+router.get('/:id/card', async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Recipe not found' });
+    const title = recipe.title;
+    const ingredients = (recipe.ingredients || []).map(ing => ing.name || ing).join(', ');
+    const instructions = (recipe.instructions || []).join('. ');
+    const params = new URLSearchParams({
+      title,
+      ingredients,
+      instructions,
+      apiKey: SPOONACULAR_API_KEY
+    });
+    const apiUrl = `https://api.spoonacular.com/recipes/visualizeRecipe?${params.toString()}`;
+    const apiRes = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    if (!apiRes.ok) {
+      return res.status(500).json({ error: 'Failed to generate recipe card' });
+    }
+    const buffer = await apiRes.buffer();
+    res.set('Content-Type', 'image/png');
+    res.send(buffer);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 //POST request (/api/recipes)
 

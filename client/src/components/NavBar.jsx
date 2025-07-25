@@ -19,13 +19,14 @@ function Navbar() {
             {[
               { to: '/', label: 'Home' },
               { to: '/favorites', label: 'Favorites' },
+              { to: '/your-recipes', label: 'Your Recipes' },
+              { to: '/create-recipe', label: 'Create Recipe' },
             ].map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                end    // keeps “Home” only active on exact “/”
+                end={to === '/'}
                 className={({ isActive }) =>
-                //make log in page rounded
                   `px-3 py-2 rounded-md text-sm font-medium transition-colors
                    ${
                      isActive
