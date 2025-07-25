@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug: check if .env is loaded
+console.log('SPOONACULAR_API_KEY:', process.env.SPOONACULAR_API_KEY); // Debug: check if .env is loaded
 
 //2. Connect to MongoDB
 import './db/index.js';
