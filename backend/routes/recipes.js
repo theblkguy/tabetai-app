@@ -1,8 +1,26 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Recipe from '../models/Recipe.js';
 import fetch from 'node-fetch';
 const router = express.Router();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY || 'YOUR_API_KEY';
+
+// GET /api/recipes/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid recipe ID' });
+    }
+    const recipe = await Recipe.findById(id);
+    if (!recipe) {
+      return res.status(404).json({ error: 'Recipe not found' });
+    }
+    res.json(recipe);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Spoonacular Recipe Card endpoint
 // GET /api/recipes/:id/card
