@@ -49,7 +49,7 @@ export default {
     new webpack.DefinePlugin({
       'process.env.REACT_APP_GOOGLE_CLIENT_ID': JSON.stringify(GOOGLE_CLIENT_ID),
       'process.env.GOOGLE_CLIENT_ID': JSON.stringify(GOOGLE_CLIENT_ID),
-      'process.env.REACT_APP_SPOONACULAR_KEY': JSON.stringify(SPOONACULAR_API_KEY),
+      'process.env.REACT_APP_SPOONACULAR_API_KEY': JSON.stringify(SPOONACULAR_API_KEY),
       'process.env.SPOONACULAR_API_KEY': JSON.stringify(SPOONACULAR_API_KEY)
     })
   ],

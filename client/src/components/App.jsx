@@ -8,6 +8,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useUser } from "../UserContext";
 import RecipeCardPage from "./RecipeCards/RecipeCardPage";
 import YourRecipes from "./YourRecipes";
+import RecipeDetailPage from "./RecipeDetailPage";
 import CreateRecipePage from "./CreateRecipePage";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
@@ -27,7 +28,8 @@ function App() {
           <Route path="/login" element={<LoginPage onLogin={setUser} error={error} setError={setError} />} />
           <Route path="/recipe-card/:id" element={<RecipeCardPage />} />
           <Route path="/create-recipe" element={<CreateRecipePage />} />
-          <Route path="/your-recipes" element={<YourRecipes />} />
+      <Route path="/your-recipes" element={<YourRecipes />} />
+      <Route path="/recipes/:id" element={<RecipeDetailPage />} />
         </Route>
       </Routes>
     </GoogleOAuthProvider>

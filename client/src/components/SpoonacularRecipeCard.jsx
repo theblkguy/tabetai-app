@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+// For Create React App, env vars must be referenced at the top level
+const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY || "";
+
 // Usage: <SpoonacularRecipeCard title="Pizza" ingredients={["cheese", "dough"]} instructions={["Bake it"]} />
 function SpoonacularRecipeCard({ title, ingredients, instructions, image }) {
   const [cardUrl, setCardUrl] = useState(null);
@@ -11,22 +14,29 @@ function SpoonacularRecipeCard({ title, ingredients, instructions, image }) {
     setError(null);
     setCardUrl(null);
     try {
-      const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY || "YOUR_API_KEY";
+      // Hardcoded, non-empty values for testing
       const params = new URLSearchParams({
-        title: title || "My Recipe",
-        ingredients: (ingredients || []).map(i => i.name || i).join(", "),
-        instructions: (instructions || []).join(". "),
-        apiKey
+        title: "Test Recipe",
+        ingredients: "1 cup flour, 2 eggs, 1/2 cup milk",
+        instructions: "Mix ingredients. Bake for 20 minutes. Let cool."
       });
-      const res = await fetch(`https://api.spoonacular.com/recipes/visualizeRecipe?${params.toString()}`, {
+      const res = await fetch("/api/spoonacular/visualizeRecipe", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "image/png, application/json, text/html"
+        },
+        body: params.toString()
       });
-      if (!res.ok) throw new Error("Failed to generate recipe card");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error("Failed to generate recipe card: " + errorText);
+      }
       const blob = await res.blob();
       setCardUrl(URL.createObjectURL(blob));
     } catch (err) {
       setError(err.message);
+      console.error("Spoonacular error:", err);
     } finally {
       setLoading(false);
     }
