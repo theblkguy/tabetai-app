@@ -20,6 +20,9 @@
 git push origin main  # Triggers automatic AWS deployment
 ```
 
+> **⚠️ First-time deployment?** You need to configure GitHub secrets first!  
+> See [SECRETS_SETUP.md](SECRETS_SETUP.md) for detailed instructions.
+
 ## 🌟 Project Vision
 
 Tabetai addresses common everyday challenges in meal planning and cooking:
