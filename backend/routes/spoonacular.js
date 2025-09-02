@@ -4,6 +4,60 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// GET /api/spoonacular/recipes - Search recipes by ingredients
+router.get('/recipes', async (req, res) => {
+  try {
+    const apiKey = process.env.SPOONACULAR_API_KEY || process.env.REACT_APP_SPOONACULAR_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Spoonacular API key not set' });
+    }
+
+    const { ingredients, number = 12 } = req.query;
+    if (!ingredients) {
+      return res.status(400).json({ error: 'Ingredients parameter is required' });
+    }
+
+    const url = `https://api.spoonacular.com/recipes/findByIngredients?apiKey=${apiKey}&ingredients=${encodeURIComponent(ingredients)}&number=${number}&ignorePantry=true`;
+    
+    const spoonacularRes = await fetch(url);
+    if (!spoonacularRes.ok) {
+      const errorText = await spoonacularRes.text();
+      return res.status(spoonacularRes.status).json({ error: errorText });
+    }
+
+    const data = await spoonacularRes.json();
+    res.json(data);
+  } catch (err) {
+    console.error('Spoonacular search error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/spoonacular/recipes/:id - Get detailed recipe information
+router.get('/recipes/:id', async (req, res) => {
+  try {
+    const apiKey = process.env.SPOONACULAR_API_KEY || process.env.REACT_APP_SPOONACULAR_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Spoonacular API key not set' });
+    }
+
+    const { id } = req.params;
+    const url = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${apiKey}&includeNutrition=false`;
+    
+    const spoonacularRes = await fetch(url);
+    if (!spoonacularRes.ok) {
+      const errorText = await spoonacularRes.text();
+      return res.status(spoonacularRes.status).json({ error: errorText });
+    }
+
+    const data = await spoonacularRes.json();
+    res.json(data);
+  } catch (err) {
+    console.error('Spoonacular recipe detail error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/spoonacular/visualizeRecipe
 router.post('/visualizeRecipe', express.raw({ type: 'application/x-www-form-urlencoded' }), async (req, res) => {
   try {

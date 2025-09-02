@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../UserContext";
+import { useNavigate } from "react-router-dom";
 
 // Get Google client ID
 let clientId = undefined;
@@ -16,7 +17,15 @@ if (
 
 const LoginPage = ({ onLogin, error, setError }) => {
   const { register, handleSubmit } = useForm();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const onSubmit = async (data) => {
     try {
@@ -31,23 +40,10 @@ const LoginPage = ({ onLogin, error, setError }) => {
       localStorage.setItem("user", JSON.stringify(user.user));
       if (onLogin) onLogin(user.user);
       if (setError) setError(null);
-      window.location.href = "/";
+      navigate("/");
     } catch {
       if (setError) setError("Login failed. Please try again.");
     }
-  };
-
-  const handleLogout = async () => {
-    if (onLogin) onLogin(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    try {
-      await fetch("/api/users/logout", { method: "POST" });
-    } catch {
-      // Ignore logout errors
-    }
-    window.location.href = "/login";
   };
 
   return (
@@ -77,7 +73,7 @@ const LoginPage = ({ onLogin, error, setError }) => {
                 localStorage.setItem("user", JSON.stringify(user.user));
                 if (onLogin) onLogin(user.user);
                 if (setError) setError(null);
-                window.location.href = "/";
+                navigate("/");
               } catch {
                 if (setError) setError("Google login failed. Please try again.");
               }
@@ -121,15 +117,6 @@ const LoginPage = ({ onLogin, error, setError }) => {
             Log In
           </button>
         </form>
-
-        {/* Logout Button */}
-        <button
-          style={{ marginTop: "1em" }}
-          onClick={handleLogout}
-          className="text-xs text-center text-gray-400 hover:text-fridgeText block w-full"
-        >
-          Log Out
-        </button>
       </div>
     </div>
   );
