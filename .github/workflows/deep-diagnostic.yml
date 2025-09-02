@@ -1,0 +1,127 @@
+name: Deep Diagnostic
+
+on:
+  workflow_dispatch:
+
+jobs:
+  comprehensive-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Repository Information
+      run: |
+        echo "=== REPOSITORY DIAGNOSTICS ==="
+        echo "Repository: ${{ github.repository }}"
+        echo "Repository Owner: ${{ github.repository_owner }}"
+        echo "Actor: ${{ github.actor }}"
+        echo "Event: ${{ github.event_name }}"
+        echo "Ref: ${{ github.ref }}"
+        echo "SHA: ${{ github.sha }}"
+        echo "Workspace: ${{ github.workspace }}"
+        echo ""
+        
+    - name: GitHub Context
+      run: |
+        echo "=== GITHUB CONTEXT ==="
+        echo "GitHub Token exists: ${{ github.token != '' }}"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Run Number: ${{ github.run_number }}"
+        echo "Job: ${{ github.job }}"
+        echo ""
+        
+    - name: Environment Variables
+      run: |
+        echo "=== ENVIRONMENT VARIABLES ==="
+        echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+        echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+        echo "GITHUB_TOKEN exists: ${{ env.GITHUB_TOKEN != '' }}"
+        echo ""
+        
+    - name: Test Secrets Context
+      run: |
+        echo "=== SECRETS CONTEXT TEST ==="
+        
+        # Test if secrets context exists at all
+        echo "Secrets context availability test..."
+        
+        # Try different approaches to access secrets
+        echo "Approach 1: Direct access"
+        echo "EC2_HOST direct: '${{ secrets.EC2_HOST }}'"
+        
+        echo "Approach 2: Environment variable"
+        echo "EC2_HOST env: '${EC2_HOST}'"
+        
+        echo "Approach 3: Conditional check"
+        if [ "${{ secrets.EC2_HOST }}" = "" ]; then
+          echo "EC2_HOST is empty string"
+        elif [ -z "${{ secrets.EC2_HOST }}" ]; then
+          echo "EC2_HOST is unset/null"
+        else
+          echo "EC2_HOST has value (length: ${#EC2_HOST})"
+        fi
+        
+        echo ""
+        echo "=== ALL SECRETS STATUS ==="
+        echo "EC2_HOST: '${{ secrets.EC2_HOST }}'"
+        echo "EC2_USER: '${{ secrets.EC2_USER }}'"
+        echo "EC2_SSH_KEY length: ${#EC2_SSH_KEY}"
+        echo "MONGODB_URI: '${{ secrets.MONGODB_URI }}'"
+        echo "SPOONACULAR_API_KEY: '${{ secrets.SPOONACULAR_API_KEY }}'"
+        echo "GOOGLE_CLIENT_ID: '${{ secrets.GOOGLE_CLIENT_ID }}'"
+        
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        
+    - name: Test with Different Secret Names
+      run: |
+        echo "=== TESTING DIFFERENT SECRET ACCESS PATTERNS ==="
+        
+        # Test if there's a naming issue
+        echo "Testing potential naming variations..."
+        echo "EC2HOST: '${{ secrets.EC2HOST }}'"
+        echo "ec2_host: '${{ secrets.ec2_host }}'"
+        echo "EC2-HOST: '${{ secrets.EC2-HOST }}'"
+        
+    - name: Permissions and Context Check
+      run: |
+        echo "=== PERMISSIONS CHECK ==="
+        echo "Can write files: $(touch test_file && echo 'YES' || echo 'NO')"
+        echo "Current user: $(whoami)"
+        echo "Working directory: $(pwd)"
+        echo "GitHub workspace permissions: $(ls -la ${{ github.workspace }} 2>/dev/null || echo 'No workspace access')"
+        
+    - name: Final Analysis
+      run: |
+        echo "=== FINAL ANALYSIS ==="
+        
+        # Count how many secrets are actually accessible
+        secret_count=0
+        
+        [ -n "${{ secrets.EC2_HOST }}" ] && secret_count=$((secret_count + 1))
+        [ -n "${{ secrets.EC2_USER }}" ] && secret_count=$((secret_count + 1))
+        [ -n "${{ secrets.EC2_SSH_KEY }}" ] && secret_count=$((secret_count + 1))
+        [ -n "${{ secrets.MONGODB_URI }}" ] && secret_count=$((secret_count + 1))
+        [ -n "${{ secrets.SPOONACULAR_API_KEY }}" ] && secret_count=$((secret_count + 1))
+        [ -n "${{ secrets.GOOGLE_CLIENT_ID }}" ] && secret_count=$((secret_count + 1))
+        
+        echo "Accessible secrets count: ${secret_count}/6"
+        
+        if [ ${secret_count} -eq 0 ]; then
+          echo ""
+          echo "🚨 DIAGNOSIS: NO SECRETS ACCESSIBLE"
+          echo "This indicates one of the following issues:"
+          echo "1. Secrets are not actually set in the repository"
+          echo "2. Organization-level policies are blocking access"
+          echo "3. Repository is in a restricted state due to fork relationship"
+          echo "4. GitHub Actions permissions are insufficient"
+          echo "5. Secrets are set at organization level but not accessible to repository"
+          echo ""
+          echo "RECOMMENDED ACTIONS:"
+          echo "1. Double-check secrets are in Repository Secrets (not Organization)"
+          echo "2. Check if repository is part of an organization with restrictions"
+          echo "3. Consider detaching from fork or creating fresh repository"
+        fi
