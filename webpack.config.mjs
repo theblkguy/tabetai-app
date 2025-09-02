@@ -2,6 +2,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import dotenv from 'dotenv';
 dotenv.config({ path: './client/.env' });
 
@@ -51,6 +52,10 @@ export default {
       'process.env.GOOGLE_CLIENT_ID': JSON.stringify(GOOGLE_CLIENT_ID),
       'process.env.REACT_APP_SPOONACULAR_API_KEY': JSON.stringify(SPOONACULAR_API_KEY),
       'process.env.SPOONACULAR_API_KEY': JSON.stringify(SPOONACULAR_API_KEY)
+    }),
+    new HtmlWebpackPlugin({
+      template: './client/src/index.html',
+      filename: 'index.html',
     })
   ],
   resolve: {
