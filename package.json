@@ -5,8 +5,11 @@
   "main": "index.jsx",
   "scripts": {
     "start": "webpack serve --config webpack.config.mjs --mode development",
+    "start:backend": "cd backend && npm run dev",
+    "start:client": "webpack serve --config webpack.config.mjs --mode development",
     "test": "test",
-    "build": "webpack"
+    "build": "webpack --config webpack.prod.config.mjs --mode production",
+    "build:client": "cd client && npm run build"
   },
   "type": "module",
   "repository": {
