@@ -1,8 +1,6 @@
-name: Deploy to AWS
+name: Deploy Without Validation
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -12,54 +10,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Validate required secrets
-      env:
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-        EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
-        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      run: |
-        echo "Checking required secrets..."
-        if [ -z "$EC2_HOST" ]; then
-          echo "❌ EC2_HOST secret is not set"
-          echo "Please add your EC2 IP address as EC2_HOST secret"
-          exit 1
-        fi
-        if [ -z "$EC2_USER" ]; then
-          echo "❌ EC2_USER secret is not set"
-          echo "Please add 'ubuntu' or 'ec2-user' as EC2_USER secret"
-          exit 1
-        fi
-        if [ -z "$EC2_SSH_KEY" ]; then
-          echo "❌ EC2_SSH_KEY secret is not set"
-          echo "Please add your .pem file content as EC2_SSH_KEY secret"
-          exit 1
-        fi
-        if [ -z "$MONGODB_URI" ]; then
-          echo "❌ MONGODB_URI secret is not set"
-          echo "Please add your MongoDB connection string as MONGODB_URI secret"
-          exit 1
-        fi
-        if [ -z "$SPOONACULAR_API_KEY" ]; then
-          echo "❌ SPOONACULAR_API_KEY secret is not set"
-          echo "Please add your Spoonacular API key as SPOONACULAR_API_KEY secret"
-          exit 1
-        fi
-        if [ -z "$GOOGLE_CLIENT_ID" ]; then
-          echo "❌ GOOGLE_CLIENT_ID secret is not set"
-          echo "Please add your Google OAuth client ID as GOOGLE_CLIENT_ID secret"
-          exit 1
-        fi
-        echo "✅ All required secrets are configured!"
-        echo "EC2_HOST: ${EC2_HOST}"
-        echo "EC2_USER: ${EC2_USER}"
-        echo "SSH key length: ${#EC2_SSH_KEY}"
-        echo "MongoDB URI length: ${#MONGODB_URI}"
-        echo "Spoonacular key length: ${#SPOONACULAR_API_KEY}"
-        echo "Google client ID length: ${#GOOGLE_CLIENT_ID}"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -97,8 +47,6 @@ jobs:
         # Copy built frontend files
         mkdir -p deploy/public
         cp -r client/dist/* deploy/public/
-        # Copy root package.json for any shared dependencies
-        cp package.json deploy/package-root.json
 
     - name: Create backend .env file in deployment
       run: |
@@ -121,10 +69,7 @@ jobs:
         HOST="${{ secrets.EC2_HOST }}"
         USER="${{ secrets.EC2_USER }}"
         
-        # Debug: Check if variables are set (without exposing content)
-        echo "HOST: ${HOST}"
-        echo "USER: ${USER}"
-        echo "SSH Key length: ${#PRIVATE_KEY}"
+        echo "Deploying to ${USER}@${HOST}"
         
         # Create private key file
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
@@ -158,35 +103,17 @@ jobs:
           # Install PM2 globally if not exists
           which pm2 || npm install -g pm2
           
-          # Ensure PM2 is in PATH
-          export PATH=$PATH:/usr/local/bin:$(npm bin -g)
-          
-          # Kill any existing processes on port 5000
-          sudo fuser -k 5000/tcp || true
-          
-          # Stop and delete existing PM2 process
-          pm2 delete tabetai-app || true
-          
-          # Wait for cleanup
-          sleep 3
-          
           # Start application with PM2
           NODE_ENV=production pm2 start server.js --name "tabetai-app"
           
           # Save PM2 configuration
           pm2 save
           
-          # Setup PM2 startup script
-          sudo pm2 startup systemd -u ubuntu --hp /home/ubuntu || true
-          
           # Clean up
           rm ~/deployment.zip
           
           echo "Deployment completed successfully!"
-          echo "PM2 Status:"
           pm2 status
-          echo "Application logs:"
-          pm2 logs tabetai-app --lines 10
         EOF
         
         # Clean up local private key
