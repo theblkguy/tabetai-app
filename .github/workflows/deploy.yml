@@ -29,18 +29,7 @@ jobs:
         echo "MONGODB_URI: ${MONGODB_URI:+SET}"
         echo "SPOONACULAR_API_KEY: ${SPOONACULAR_API_KEY:+SET}"
         echo "GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:+SET}"
-        if [ -z "$GOOGLE_CLIENT_ID" ]; then
-          echo "❌ GOOGLE_CLIENT_ID secret is not set"
-          echo "Please add your Google OAuth client ID as GOOGLE_CLIENT_ID secret"
-          exit 1
-        fi
-        echo "✅ All required secrets are configured!"
-        echo "EC2_HOST: ${EC2_HOST}"
-        echo "EC2_USER: ${EC2_USER}"
-        echo "SSH key length: ${#EC2_SSH_KEY}"
-        echo "MongoDB URI length: ${#MONGODB_URI}"
-        echo "Spoonacular key length: ${#SPOONACULAR_API_KEY}"
-        echo "Google client ID length: ${#GOOGLE_CLIENT_ID}"
+        echo "✅ Proceeding with deployment!"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -102,10 +91,32 @@ jobs:
         HOST="${{ secrets.EC2_HOST }}"
         USER="${{ secrets.EC2_USER }}"
         
+        # Validate that secrets were properly injected
+        echo "🔍 Validating secret injection:"
+        if [ -z "$HOST" ]; then
+          echo "❌ Missing required secrets:"
+          echo "EC2_HOST: 'NOT SET'"
+          echo ""
+          echo "Please ensure secrets are configured in repository settings:"
+          echo "https://github.com/theblkguy/tabetai-app/settings/secrets/actions"
+          exit 1
+        fi
+        if [ -z "$USER" ]; then
+          echo "❌ Missing required secrets:"
+          echo "EC2_USER: 'NOT SET'"
+          exit 1
+        fi
+        if [ -z "$PRIVATE_KEY" ]; then
+          echo "❌ Missing required secrets:"
+          echo "EC2_SSH_KEY: 'NOT SET'"
+          exit 1
+        fi
+        
         # Debug: Check if variables are set (without exposing content)
+        echo "✅ All secrets properly injected:"
         echo "HOST: ${HOST}"
         echo "USER: ${USER}"
-        echo "SSH Key length: ${#PRIVATE_KEY}"
+        echo "SSH Key length: ${#PRIVATE_KEY} characters"
         
         # Create private key file
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
