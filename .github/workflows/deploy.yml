@@ -106,7 +106,7 @@ jobs:
         echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
         echo "SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> .env
         echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-        echo "PORT=5000" >> .env
+        echo "PORT=80" >> .env
         echo "NODE_ENV=production" >> .env
 
     - name: Create application archive
@@ -161,8 +161,8 @@ jobs:
           # Ensure PM2 is in PATH
           export PATH=$PATH:/usr/local/bin:$(npm bin -g)
           
-          # Kill any existing processes on port 5000
-          sudo fuser -k 5000/tcp || true
+          # Kill any existing processes on port 80
+          sudo fuser -k 80/tcp || true
           
           # Stop and delete existing PM2 process
           pm2 delete tabetai-app || true
@@ -197,5 +197,5 @@ jobs:
         HOST="${{ secrets.EC2_HOST }}"
         echo "Waiting for application to start..."
         sleep 10
-        echo "Testing connection to http://${HOST}:5000/"
-        curl -f http://${HOST}:5000/ || echo "Warning: Health check failed, but deployment may still be successful"
+        echo "Testing connection to http://${HOST}:80/"
+        curl -f http://${HOST}:80/ || echo "Warning: Health check failed, but deployment may still be successful"

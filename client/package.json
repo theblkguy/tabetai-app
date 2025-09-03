@@ -52,5 +52,5 @@
     "react-hook-form": "^7.60.0",
     "react-router-dom": "^7.6.3"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:80"
 }

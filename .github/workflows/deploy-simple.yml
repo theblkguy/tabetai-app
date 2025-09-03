@@ -54,7 +54,7 @@ jobs:
         echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
         echo "SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> .env
         echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-        echo "PORT=5000" >> .env
+        echo "PORT=80" >> .env
         echo "NODE_ENV=production" >> .env
 
     - name: Create application archive
@@ -124,5 +124,5 @@ jobs:
         HOST="${{ secrets.EC2_HOST }}"
         echo "Waiting for application to start..."
         sleep 10
-        echo "Testing connection to http://${HOST}:5000/"
-        curl -f http://${HOST}:5000/ || echo "Warning: Health check failed, but deployment may still be successful"
+        echo "Testing connection to http://${HOST}:80/"
+        curl -f http://${HOST}:80/ || echo "Warning: Health check failed, but deployment may still be successful"
