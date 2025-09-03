@@ -142,21 +142,38 @@ jobs:
           # Install dependencies
           npm install --production
           
-          # Install PM2 if not exists
+          # Install PM2 globally if not exists
           which pm2 || npm install -g pm2
           
+          # Ensure PM2 is in PATH
+          export PATH=$PATH:/usr/local/bin:$(npm bin -g)
+          
+          # Kill any existing processes on port 5000
+          sudo fuser -k 5000/tcp || true
+          
+          # Stop and delete existing PM2 process
+          pm2 delete tabetai-app || true
+          
+          # Wait for cleanup
+          sleep 3
+          
           # Start application with PM2
-          pm2 start server.js --name "tabetai-app" --env production
+          NODE_ENV=production pm2 start server.js --name "tabetai-app"
+          
+          # Save PM2 configuration
           pm2 save
           
-          # Setup PM2 startup script (run once)
-          pm2 startup systemd || true
+          # Setup PM2 startup script
+          sudo pm2 startup systemd -u ubuntu --hp /home/ubuntu || true
           
           # Clean up
           rm ~/deployment.zip
           
           echo "Deployment completed successfully!"
+          echo "PM2 Status:"
           pm2 status
+          echo "Application logs:"
+          pm2 logs tabetai-app --lines 10
         EOF
         
         # Clean up local private key
