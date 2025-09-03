@@ -1,0 +1,61 @@
+name: Manual Secret Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Test secrets manually
+      run: |
+        echo "=== Manual Secret Test ==="
+        echo "Repository: ${{ github.repository }}"
+        echo "Actor: ${{ github.actor }}"
+        echo "Event: ${{ github.event_name }}"
+        echo ""
+        
+        # Test each secret individually
+        echo "Testing EC2_HOST..."
+        if [ -n "${{ secrets.EC2_HOST }}" ]; then
+          echo "✅ EC2_HOST: FOUND (length: ${#HOST})"
+        else
+          echo "❌ EC2_HOST: NOT FOUND"
+        fi
+        
+        echo "Testing EC2_USER..."
+        if [ -n "${{ secrets.EC2_USER }}" ]; then
+          echo "✅ EC2_USER: FOUND"
+        else
+          echo "❌ EC2_USER: NOT FOUND"
+        fi
+        
+        echo "Testing EC2_SSH_KEY..."
+        if [ -n "${{ secrets.EC2_SSH_KEY }}" ]; then
+          echo "✅ EC2_SSH_KEY: FOUND"
+        else
+          echo "❌ EC2_SSH_KEY: NOT FOUND"
+        fi
+        
+        echo "Testing MONGODB_URI..."
+        if [ -n "${{ secrets.MONGODB_URI }}" ]; then
+          echo "✅ MONGODB_URI: FOUND"
+        else
+          echo "❌ MONGODB_URI: NOT FOUND"
+        fi
+        
+        echo "Testing SPOONACULAR_API_KEY..."
+        if [ -n "${{ secrets.SPOONACULAR_API_KEY }}" ]; then
+          echo "✅ SPOONACULAR_API_KEY: FOUND"
+        else
+          echo "❌ SPOONACULAR_API_KEY: NOT FOUND"
+        fi
+        
+        echo "Testing GOOGLE_CLIENT_ID..."
+        if [ -n "${{ secrets.GOOGLE_CLIENT_ID }}" ]; then
+          echo "✅ GOOGLE_CLIENT_ID: FOUND"
+        else
+          echo "❌ GOOGLE_CLIENT_ID: NOT FOUND"
+        fi
+      env:
+        HOST: ${{ secrets.EC2_HOST }}

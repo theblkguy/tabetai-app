@@ -20,7 +20,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the React app in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+} else {
+  // In development, serve static files from client/dist
+  app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
 }
 
 //3. Register routes
@@ -42,7 +45,7 @@ app.get('/', (req, res) => {
 // Serve React app for any non-API routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
   });
 }
 

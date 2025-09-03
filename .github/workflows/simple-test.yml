@@ -1,0 +1,29 @@
+name: Simple Secret Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check if any secret works
+      run: |
+        echo "Testing basic secret access..."
+        echo "EC2_HOST value (should not be empty): '${{ secrets.EC2_HOST }}'"
+        if [ -n "${{ secrets.EC2_HOST }}" ]; then
+          echo "✅ EC2_HOST secret is accessible"
+        else
+          echo "❌ EC2_HOST secret is NOT accessible"
+        fi
+        
+        # Test with environment variable approach
+        HOST="${{ secrets.EC2_HOST }}"
+        echo "HOST variable: '${HOST}'"
+        
+        # Show repository context
+        echo "Repository: ${{ github.repository }}"
+        echo "Actor: ${{ github.actor }}"
+        echo "Event: ${{ github.event_name }}"

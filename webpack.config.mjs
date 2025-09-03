@@ -44,6 +44,13 @@ export default {
           'postcss-loader',
         ],
       },
+      {
+        test: /\.(ico|png|jpg|jpeg|gif|svg)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext]',
+        },
+      },
     ],
   },
   plugins: [
@@ -56,6 +63,7 @@ export default {
     new HtmlWebpackPlugin({
       template: './client/src/index.html',
       filename: 'index.html',
+      favicon: './client/src/favicon.ico',
     })
   ],
   resolve: {
