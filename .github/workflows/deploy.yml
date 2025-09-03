@@ -9,18 +9,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Validate required secrets (TEMPORARILY DISABLED)
-      env:
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-        EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
-        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       run: |
         echo "✅ Skipping validation for now - deploying with available secrets"
         echo "EC2_HOST: ${EC2_HOST:+SET}"
@@ -53,8 +54,8 @@ jobs:
     - name: Create client .env file
       run: |
         cd client
-        echo "REACT_APP_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > .env
-        echo "REACT_APP_SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> .env
+        echo "REACT_APP_GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" > .env
+        echo "REACT_APP_SPOONACULAR_API_KEY=$SPOONACULAR_API_KEY" >> .env
 
     - name: Build client
       run: npm run build
@@ -73,9 +74,9 @@ jobs:
     - name: Create backend .env file in deployment
       run: |
         cd deploy
-        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
-        echo "SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> .env
-        echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+        echo "MONGODB_URI=$MONGODB_URI" > .env
+        echo "SPOONACULAR_API_KEY=$SPOONACULAR_API_KEY" >> .env
+        echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
         echo "PORT=80" >> .env
         echo "NODE_ENV=production" >> .env
 
@@ -86,10 +87,10 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        # Set environment variables from secrets
-        PRIVATE_KEY="${{ secrets.EC2_SSH_KEY }}"
-        HOST="${{ secrets.EC2_HOST }}"
-        USER="${{ secrets.EC2_USER }}"
+        # Use environment variables (secrets are injected at job level)
+        PRIVATE_KEY="$EC2_SSH_KEY"
+        HOST="$EC2_HOST"
+        USER="$EC2_USER"
         
         # Validate that secrets were properly injected
         echo "🔍 Validating secret injection:"
@@ -186,7 +187,7 @@ jobs:
 
     - name: Verify Deployment
       run: |
-        HOST="${{ secrets.EC2_HOST }}"
+        HOST="$EC2_HOST"
         echo "Waiting for application to start..."
         sleep 10
         echo "Testing connection to http://${HOST}:80/"
