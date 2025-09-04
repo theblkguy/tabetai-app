@@ -95,7 +95,7 @@ jobs:
           pm2 delete tabetai-app || echo "No existing process"
 
           # Start new server
-          pm2 start backend/server.js --name tabetai-app
+          pm2 start server.js --name tabetai-app
           
           # Check status
           pm2 status
