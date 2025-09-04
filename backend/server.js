@@ -26,6 +26,11 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
 }
 
+// Always serve favicon from the public directory
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
+
 //3. Register routes
 import searchbarRoutes from './routes/searchbar.js';
 import spoonacularRouter from './routes/spoonacular.js';
