@@ -1,0 +1,78 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: tabetai-secrets
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check required secrets
+      run: |
+        echo "Checking secrets availability..."
+        if [ -z "${{ secrets.EC2_HOST }}" ]; then
+          echo "ERROR: EC2_HOST secret is missing"
+          exit 1
+        fi
+        if [ -z "${{ secrets.EC2_USER }}" ]; then
+          echo "ERROR: EC2_USER secret is missing"
+          exit 1
+        fi
+        if [ -z "${{ secrets.EC2_SSH_KEY }}" ]; then
+          echo "ERROR: EC2_SSH_KEY secret is missing"
+          exit 1
+        fi
+        echo "All required secrets are available"
+        
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to EC2
+      run: |
+        echo "Deploying to EC2..."
+        
+        # Copy files to server
+        rsync -avz --delete \
+          --exclude 'node_modules' \
+          --exclude '.git' \
+          --exclude '*.log' \
+          ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/app/
+        
+        # Deploy on server
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /home/${{ secrets.EC2_USER }}/app
+          
+          # Install dependencies
+          cd backend
+          npm install --production
+          
+          # Stop existing server
+          pm2 delete tabetai-app || echo "No existing process"
+          
+          # Start new server
+          export PORT=8080
+          pm2 start server.js --name tabetai-app
+          
+          # Check status
+          pm2 status
+          sleep 3
+          pm2 logs tabetai-app --lines 10
+        EOF
+        
+        echo "Deployment completed!"
+        
+    - name: Test deployment
+      run: |
+        echo "Testing deployment..."
+        curl -f http://${{ secrets.EC2_HOST }}:8080 || echo "Server not responding"
