@@ -117,7 +117,7 @@ jobs:
           echo "=== STOPPING OLD SERVER ==="
           pm2 delete tabetai-app || echo "No existing tabetai-app process"
           echo "=== STARTING NEW SERVER ==="
-          pm2 start server-progressive.js --name tabetai-app --no-daemon --log-date-format="YYYY-MM-DD HH:mm:ss" &
+          pm2 start server-no-db.js --name tabetai-app --no-daemon --log-date-format="YYYY-MM-DD HH:mm:ss" &
           sleep 5
           echo "=== PM2 STATUS AFTER ==="
           pm2 status
