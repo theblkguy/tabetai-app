@@ -109,7 +109,7 @@ jobs:
           cd ~/app
           npm install --production
           pm2 delete tabetai-app || true
-          pm2 start server.js --name tabetai-app --env production
+          pm2 start server-simple.js --name tabetai-app --env production
           pm2 save
         EOF
         
