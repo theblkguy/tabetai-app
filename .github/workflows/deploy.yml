@@ -20,6 +20,31 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      
+    - name: Test secret availability
+      run: |
+        # This is a direct test without environment variables
+        echo "Testing direct secret injection:"
+        if [ -n "${{ secrets.EC2_HOST }}" ]; then
+          echo "EC2_HOST is available"
+        else
+          echo "EC2_HOST is NOT available"
+        fi
+        
+        if [ -n "${{ secrets.EC2_USER }}" ]; then
+          echo "EC2_USER is available"  
+        else
+          echo "EC2_USER is NOT available"
+        fi
+        
+        if [ -n "${{ secrets.EC2_SSH_KEY }}" ]; then
+          echo "EC2_SSH_KEY is available"
+        else
+          echo "EC2_SSH_KEY is NOT available"
+        fi
+        
+        # Try to show the first character of each secret (safe way to test)
+        echo "First char of EC2_HOST: ${{ secrets.EC2_HOST && secrets.EC2_HOST[0] || 'EMPTY' }}"
 
     - name: Debug secrets
       run: |
