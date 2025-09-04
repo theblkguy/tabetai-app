@@ -31,15 +31,26 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
 
-//3. Register routes
+//3. Register routes (loading one by one to isolate issues)
+console.log('Loading searchbar routes...');
 import searchbarRoutes from './routes/searchbar.js';
-import spoonacularRouter from './routes/spoonacular.js';
+console.log('✅ Searchbar routes loaded successfully');
+
+console.log('Loading recipes routes...');
 import recipeRoutes from './routes/recipes.js';
+console.log('✅ Recipes routes loaded successfully');
+
+console.log('Loading spoonacular routes...');
+import spoonacularRouter from './routes/spoonacular.js';
+console.log('✅ Spoonacular routes loaded successfully');
+
+console.log('Loading user routes...');
 import userRoutes from './routes/users.js';
+console.log('✅ User routes loaded successfully');
 
 app.use('/api/searchbar', searchbarRoutes);
-app.use('/api/spoonacular', spoonacularRouter);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/spoonacular', spoonacularRouter);
 app.use('/api/users', userRoutes);
 
 //4. Just an empty endpoint here to test if the route works
