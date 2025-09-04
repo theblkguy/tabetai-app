@@ -7,7 +7,8 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-late          echo "=== STARTING NEW SERVER ==="
+          pm2 start server.js --name tabetai-app --no-daemon --log-date-format="YYYY-MM-DD HH:mm:ss" &
     environment: tabetai-secrets
     
     env:
