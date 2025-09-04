@@ -6,6 +6,7 @@ on:
 jobs:
   ssh-test:
     runs-on: ubuntu-latest
+    environment: tabetai-secrets
     
     steps:
     - name: Test SSH without secrets (hardcoded)
