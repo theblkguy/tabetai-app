@@ -1,72 +1,68 @@
-//1. load env variables from .env
-import dotenv from 'dotenv';
-dotenv.config();
-console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug: check if .env is loaded
-console.log('SPOONACULAR_API_KEY:', process.env.SPOONACULAR_API_KEY); // Debug: check if .env is loaded
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
-//2. Connect to MongoDB
-import './db/index.js';
-
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from the React app in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')));
-} else {
-  // In development, serve static files from client/dist
-  app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
-}
-
-// Always serve favicon from the public directory
-app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+const server = http.createServer((req, res) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  
+  if (req.url === '/favicon.ico') {
+    const faviconPath = path.join(__dirname, 'public', 'favicon.ico');
+    
+    if (fs.existsSync(faviconPath)) {
+      const favicon = fs.readFileSync(faviconPath);
+      res.writeHead(200, { 'Content-Type': 'image/x-icon' });
+      res.end(favicon);
+    } else {
+      // Serve a minimal favicon response
+      res.writeHead(200, { 'Content-Type': 'image/x-icon' });
+      res.end();
+    }
+    return;
+  }
+  
+  if (req.url === '/' || req.url === '/index.html') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Tabetai - Find Your Perfect Recipe</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+      </head>
+      <body>
+        <h1>🍜 Tabetai</h1>
+        <p>Your recipe app is running!</p>
+        <p>Server time: ${new Date().toISOString()}</p>
+      </body>
+      </html>
+    `);
+    return;
+  }
+  
+  // Handle 404
+  res.writeHead(404, { 'Content-Type': 'text/plain' });
+  res.end('Not Found');
 });
 
-//3. Register routes (loading one by one to isolate issues)
-console.log('Loading searchbar routes...');
-import searchbarRoutes from './routes/searchbar.js';
-console.log('✅ Searchbar routes loaded successfully');
-
-console.log('Loading recipes routes...');
-import recipeRoutes from './routes/recipes.js';
-console.log('✅ Recipes routes loaded successfully');
-
-console.log('Loading spoonacular routes...');
-import spoonacularRouter from './routes/spoonacular.js';
-console.log('✅ Spoonacular routes loaded successfully');
-
-console.log('Loading user routes...');
-import userRoutes from './routes/users.js';
-console.log('✅ User routes loaded successfully');
-
-app.use('/api/searchbar', searchbarRoutes);
-app.use('/api/recipes', recipeRoutes);
-app.use('/api/spoonacular', spoonacularRouter);
-app.use('/api/users', userRoutes);
-
-//4. Just an empty endpoint here to test if the route works
-app.get('/', (req, res) => {
-  res.send('Hiii is this backend working??, YES!');
-});
-
-// Serve React app for any non-API routes in production
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  });
-}
-
-//5. Start the server
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Tabetai server running on port ${PORT}`);
+  console.log(`🌐 Server accessible at http://localhost:${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
