@@ -1,10 +1,10 @@
 import express from 'express';
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 80;
 
 app.get('/', (req, res) => {
-  res.send('ULTRA SIMPLE SERVER IS WORKING!');
+  res.send('ULTRA SIMPLE SERVER IS WORKING ON PORT 80!');
 });
 
 app.get('/health', (req, res) => {
