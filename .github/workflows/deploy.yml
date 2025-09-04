@@ -1,0 +1,67 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm install
+        cd client && npm install
+        cd ../backend && npm install
+
+    - name: Build client
+      run: npm run build
+
+    - name: Create backend env file
+      run: |
+        cd backend
+        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
+        echo "SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> .env
+        echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+        echo "PORT=80" >> .env
+        echo "NODE_ENV=production" >> .env
+
+    - name: Deploy to server
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" > private_key
+        chmod 600 private_key
+        
+        # Copy backend files
+        rsync -avz --delete -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+          backend/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/app/
+        
+        # Copy built frontend files
+        rsync -avz --delete -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+          client/dist/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/app/public/
+        
+        # Deploy on server
+        ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd ~/app
+          npm install --production
+          sudo pm2 delete tabetai-app || true
+          sudo pm2 start server.js --name tabetai-app
+          sudo pm2 save
+        EOF
+        
+        rm -f private_key
+
+    - name: Verify deployment
+      run: |
+        sleep 10
+        curl -f http://${{ secrets.EC2_HOST }}/ || echo "Warning: Health check failed"
