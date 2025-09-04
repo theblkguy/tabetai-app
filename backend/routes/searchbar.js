@@ -9,7 +9,9 @@ console.log(apiKey);
 
 // Debug: log the API key status (do not log the key itself for security)
 if (!apiKey) {
-  console.error('Spoonacular API key is missing!');
+  console.warn('Spoonacular API key is missing! Some features will be disabled.');
+} else {
+  console.log('Spoonacular API key is configured');
 }
 
 // Search recipes by ingredients
