@@ -9,9 +9,35 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Debug secrets
+      run: |
+        echo "Checking if secrets are injected:"
+        echo "EC2_HOST: ${EC2_HOST:+SET}"
+        echo "EC2_USER: ${EC2_USER:+SET}"
+        echo "EC2_SSH_KEY: ${EC2_SSH_KEY:+SET}"
+        echo "MONGODB_URI: ${MONGODB_URI:+SET}"
+        echo "SPOONACULAR_API_KEY: ${SPOONACULAR_API_KEY:+SET}"
+        echo "GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:+SET}"
+        
+        if [ -z "$EC2_HOST" ] || [ -z "$EC2_USER" ] || [ -z "$EC2_SSH_KEY" ]; then
+          echo "CRITICAL: Required secrets are missing"
+          echo "Please check GitHub repository secrets at:"
+          echo "https://github.com/theblkguy/tabetai-app/settings/secrets/actions"
+          exit 1
+        fi
+        echo "All required secrets are available"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -31,27 +57,29 @@ jobs:
     - name: Create backend env file
       run: |
         cd backend
-        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
-        echo "SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> .env
-        echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+        echo "MONGODB_URI=$MONGODB_URI" > .env
+        echo "SPOONACULAR_API_KEY=$SPOONACULAR_API_KEY" >> .env
+        echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
         echo "PORT=80" >> .env
         echo "NODE_ENV=production" >> .env
 
     - name: Deploy to server
       run: |
-        echo "${{ secrets.EC2_SSH_KEY }}" > private_key
+        echo "$EC2_SSH_KEY" > private_key
         chmod 600 private_key
+        
+        echo "Deploying to: $EC2_USER@$EC2_HOST"
         
         # Copy backend files
         rsync -avz --delete -e "ssh -i private_key -o StrictHostKeyChecking=no" \
-          backend/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/app/
+          backend/ $EC2_USER@$EC2_HOST:~/app/
         
         # Copy built frontend files
         rsync -avz --delete -e "ssh -i private_key -o StrictHostKeyChecking=no" \
-          client/dist/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/app/public/
+          client/dist/ $EC2_USER@$EC2_HOST:~/app/public/
         
         # Deploy on server
-        ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -i private_key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
           cd ~/app
           npm install --production
           sudo pm2 delete tabetai-app || true
@@ -64,4 +92,4 @@ jobs:
     - name: Verify deployment
       run: |
         sleep 10
-        curl -f http://${{ secrets.EC2_HOST }}/ || echo "Warning: Health check failed"
+        curl -f http://$EC2_HOST/ || echo "Warning: Health check failed"
