@@ -70,11 +70,11 @@ jobs:
           fi
           
           # Install dependencies
-          npm install --production
+          npm install
           
           # Build client files
           cd ..
-          npm install --production
+          npm install
           npm run build
           
           # Return to backend directory
