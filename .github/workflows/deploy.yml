@@ -69,22 +69,33 @@ jobs:
             echo "# SPOONACULAR_API_KEY not configured" >> .env
           fi
           
-          # Install dependencies
-          npm install
-          
-          # Build client files
+          # Install backend dependencies (production)
+          cd backend
+          npm ci --omit=dev || npm install
+
+          # Build client files (needs dev deps)
           cd ..
-          npm install
+          # Install full deps for build (including devDependencies)
+          npm ci || npm install
           npm run build
+          # After build, remove dev deps to keep production lean
+          npm prune --production || true
           
           # Return to backend directory
           cd backend
           
-          # Stop existing server
+          # Ensure port 8080 is free (kill any process using it)
+          if lsof -i:8080 -t >/dev/null ; then
+            echo "Killing process on port 8080"
+            lsof -ti:8080 | xargs -r kill -9 || true
+            sleep 1
+          fi
+
+          # Stop existing pm2 process if present
           pm2 delete tabetai-app || echo "No existing process"
-          
+
           # Start new server
-          pm2 start server.js --name tabetai-app
+          pm2 start backend/server.js --name tabetai-app
           
           # Check status
           pm2 status
