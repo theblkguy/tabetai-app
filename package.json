@@ -4,9 +4,10 @@
   "description": "An app to help you decide what's for dinner!",
   "main": "index.jsx",
   "scripts": {
-    "start": "webpack serve --config webpack.config.mjs --mode development",
-    "start:backend": "cd backend && npm run dev",
-    "start:client": "webpack serve --config webpack.config.mjs --mode development",
+    "dev": "webpack serve --config webpack.config.mjs --mode development",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:client": "webpack serve --config webpack.config.mjs --mode development",
+    "start": "npm run build && cd backend && npm start",
     "test": "test",
     "build": "webpack --config webpack.prod.config.mjs --mode production",
     "build:client": "cd client && npm run build"

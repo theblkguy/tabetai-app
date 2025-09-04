@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the React app in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+  app.use(express.static(path.join(__dirname, 'public')));
 } else {
   // In development, serve static files from client/dist
   app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
@@ -45,13 +45,12 @@ app.get('/', (req, res) => {
 // Serve React app for any non-API routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
 
 //5. Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-

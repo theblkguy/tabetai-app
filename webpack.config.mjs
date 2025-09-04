@@ -80,7 +80,7 @@ export default {
     proxy: [
       {
         context: ['/api'],
-        target: 'http://localhost:5000',
+        target: 'http://localhost:80',
         changeOrigin: true
       }
     ]
