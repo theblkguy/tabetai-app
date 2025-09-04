@@ -59,14 +59,15 @@ router.get('/recipes/:id', async (req, res) => {
 });
 
 // POST /api/spoonacular/visualizeRecipe
-router.post('/visualizeRecipe', express.raw({ type: 'application/x-www-form-urlencoded' }), async (req, res) => {
+router.post('/visualizeRecipe', async (req, res) => {
   try {
     const apiKey = process.env.SPOONACULAR_API_KEY || process.env.REACT_APP_SPOONACULAR_API_KEY;
     if (!apiKey) {
       return res.status(500).json({ error: 'Spoonacular API key not set' });
     }
     
-    const bodyData = req.body.toString();
+    // Get the raw body as string
+    const bodyData = req.body ? req.body.toString() : '';
     
     const spoonacularRes = await fetch(`https://api.spoonacular.com/recipes/visualizeRecipe?apiKey=${apiKey}`, {
       method: 'POST',
