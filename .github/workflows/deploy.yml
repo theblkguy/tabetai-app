@@ -107,11 +107,25 @@ jobs:
         # Deploy on server
         ssh -i private_key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
           cd ~/app
+          echo "=== PRE-DEPLOYMENT STATUS ==="
+          pwd
+          ls -la
+          echo "=== INSTALLING DEPENDENCIES ==="
           npm install --production
-          pm2 delete tabetai-app || true
-          pm2 start server-minimal.js --name tabetai-app
+          echo "=== PM2 STATUS BEFORE ==="
+          pm2 status || echo "PM2 not running"
+          echo "=== STOPPING OLD SERVER ==="
+          pm2 delete tabetai-app || echo "No existing tabetai-app process"
+          echo "=== STARTING NEW SERVER ==="
+          pm2 start server-bulletproof.js --name tabetai-app --no-daemon --log-date-format="YYYY-MM-DD HH:mm:ss" &
+          sleep 5
+          echo "=== PM2 STATUS AFTER ==="
+          pm2 status
+          echo "=== PM2 LOGS ==="
+          pm2 logs tabetai-app --lines 10 || echo "No logs yet"
+          echo "=== SAVING PM2 CONFIG ==="
           pm2 save
-          echo "Deployment completed successfully"
+          echo "=== DEPLOYMENT COMPLETE ==="
         EOF
         
         rm -f private_key
