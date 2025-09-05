@@ -8,7 +8,6 @@
     "dev:backend": "cd backend && npm run dev",
     "dev:client": "webpack serve --config webpack.config.mjs --mode development",
     "start": "npm run build && cd backend && npm start",
-    "test": "test",
     "build": "webpack --config webpack.prod.config.mjs --mode production",
     "build:client": "cd client && npm run build"
   },

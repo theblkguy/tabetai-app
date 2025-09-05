@@ -28,7 +28,6 @@ router.get('/recipes', async (req, res) => {
     const data = await spoonacularRes.json();
     res.json(data);
   } catch (err) {
-    console.error('Spoonacular search error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -53,7 +52,6 @@ router.get('/recipes/:id', async (req, res) => {
     const data = await spoonacularRes.json();
     res.json(data);
   } catch (err) {
-    console.error('Spoonacular recipe detail error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -87,7 +85,6 @@ router.post('/visualizeRecipe', async (req, res) => {
     res.set('Content-Type', 'image/png');
     spoonacularRes.body.pipe(res);
   } catch (err) {
-    console.error('Spoonacular proxy error:', err);
     res.status(500).json({ error: err.message });
   }
 });

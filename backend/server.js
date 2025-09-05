@@ -51,7 +51,4 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Tabetai server running on port ${PORT}`);
-  console.log(`🌐 Server accessible at http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
 });

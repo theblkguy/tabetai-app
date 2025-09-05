@@ -33,7 +33,6 @@ function SpoonacularRecipeCard({ title, ingredients, instructions, image }) {
       setCardUrl(URL.createObjectURL(blob));
     } catch (err) {
       setError(err.message);
-      console.error("Spoonacular error:", err);
     } finally {
       setLoading(false);
     }

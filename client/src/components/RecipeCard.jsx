@@ -1,7 +1,6 @@
 import React from "react";
 
 function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
-  console.log('isFavorite:', isFavorite, 'for recipe:', recipe);
   return (
     <div className="bg-white rounded-lg shadow p-3 sm:p-4 flex flex-col items-center hover:bg-lavender transition-colors w-full max-w-xs mx-auto min-h-[140px] sm:min-h-[160px]">
       <img
